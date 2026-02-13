@@ -1,0 +1,9 @@
+{
+  "name": "jingfang-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm start --prefix backend",
+    "install:backend": "cd backend && npm install"
+  }
+}

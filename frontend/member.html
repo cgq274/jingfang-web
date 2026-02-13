@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script>(function(){if(!localStorage.getItem('token')){window.location.replace('index.html');}})();</script><title>敬方教育 - 会员中心</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body><style type="text/tailwindcss" id="member-styles-root">
+      @layer utilities {
+        .progress-ring {
+          transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+          stroke-dasharray: 283;
+          stroke-dashoffset: 283;
+          transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .course-card {
+          @apply bg-white rounded-xl shadow-soft overflow-hidden hover-lift;
+        }
+        
+        .learning-path {
+          @apply relative pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-0.5 before:bg-gray-200;
+        }
+        
+        .learning-step {
+          @apply relative mb-8 last:mb-0 before:absolute before:left-[-1.6rem] before:top-0 before:w-8 before:h-8 before:rounded-full before:bg-white before:border-4 before:border-gray-200;
+        }
+        
+        .learning-step.active {
+          @apply before:border-blue-500;
+        }
+        
+        .learning-step.completed {
+          @apply before:border-green-500 before:bg-green-500;
+        }
+      }
+    </style>
+    
+    
+    <div id="member-layout-root" class="min-h-screen bg-gray-50">
+      <!-- 顶部导航 -->
+      <header class="sticky top-0 z-40 bg-white border-b shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+          <div class="flex items-center justify-between">
+            <!-- 左侧：返回 + Logo -->
+            <div class="flex items-center space-x-3">
+              <button type="button" id="member-back-btn" class="p-2 -ml-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200" aria-label="返回" title="返回">
+                <iconify-icon icon="heroicons:arrow-left" class="text-2xl"></iconify-icon>
+              </button>
+              <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
+                <iconify-icon icon="ph:graduation-cap-fill" class="text-xl text-white"></iconify-icon>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold text-gray-900">敬方教育</h1>
+                <p class="text-sm text-gray-600">会员中心</p>
+              </div>
+            </div>
+            
+            <!-- 用户信息 -->
+            <div class="flex items-center space-x-6">
+              <div class="hidden md:flex items-center space-x-4">
+                <div class="text-right">
+                  <p id="member-username" class="font-medium text-gray-900">用户</p>
+                  <p class="text-sm text-gray-600">会员</p>
+                </div>
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-200 bg-gray-100 flex items-center justify-center">
+                  <iconify-icon icon="heroicons:user" class="text-2xl text-gray-400"></iconify-icon>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-4">
+                <button type="button" class="relative p-2 text-gray-600 hover:text-blue-600" aria-label="通知">
+                  <iconify-icon icon="heroicons:bell" class="text-2xl"></iconify-icon>
+                </button>
+                <button type="button" id="logout-btn" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                  退出登录
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- 主要内容 -->
+      <main class="container mx-auto px-6 py-8">
+        <!-- 欢迎区域 -->
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">欢迎回来，<span id="member-welcome-username">用户</span>！</h1>
+          <p class="text-gray-600">继续您的金融学习之旅</p>
+        </div>
+        
+        <!-- 学习概览 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <!-- 学习进度（根据真实观看情况显示） -->
+          <div id="member-learning-progress-card" class="bg-white rounded-xl shadow-soft p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">学习进度</h3>
+            <div class="flex items-center space-x-6">
+              <div class="relative w-24 h-24">
+                <svg class="w-full h-full progress-ring" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"></circle>
+                  <circle id="member-progress-ring-circle" cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" class="progress-ring-circle" style="stroke-dashoffset: 283;"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span id="member-progress-percent" class="text-2xl font-bold text-gray-900">0%</span>
+                </div>
+              </div>
+              <div>
+                <p class="text-gray-600 mb-2">当前课程完成度</p>
+                <p id="member-progress-lessons" class="text-sm text-gray-500">已学习 0/0 课时</p>
+                <a href="courses.html" class="mt-3 inline-block px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                  去选课
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 学习统计（随学习进度变化） -->
+          <div id="member-learning-stats-card" class="bg-white rounded-xl shadow-soft p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">学习统计</h3>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-gray-600">本周学习时长</span>
+                  <span id="member-stat-hours" class="font-medium text-gray-900">0 小时</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div id="member-stat-hours-bar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-gray-600">连续学习天数</span>
+                  <span id="member-stat-days" class="font-medium text-gray-900">0 天</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div id="member-stat-days-bar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-gray-600">课程完成率</span>
+                  <span id="member-stat-rate" class="font-medium text-gray-900">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div id="member-stat-rate-bar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 学习成就（完成课程后解锁） -->
+          <div id="member-achievements-card" class="bg-white rounded-xl shadow-soft p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">学习成就</h3>
+            <div id="member-achievements-list">
+              <p class="text-gray-500 text-sm">暂无成就，完成课程学习后解锁</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 我的课程 -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">我的课程</h2>
+            <a href="courses.html" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              查看全部课程
+            </a>
+          </div>
+          <div id="member-my-courses" class="bg-white rounded-xl shadow-soft p-12 text-center">
+            <iconify-icon icon="heroicons:academic-cap" class="text-5xl text-gray-300 mb-4"></iconify-icon>
+            <p class="text-gray-500 mb-4">暂无已购课程</p>
+            <a href="courses.html" class="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">去课程中心选课</a>
+          </div>
+        </div>
+        
+        <!-- 导师咨询 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- 导师列表 -->
+          <div class="bg-white rounded-xl shadow-soft p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">可咨询的导师</h3>
+            <div class="py-8 text-center text-gray-500">
+              <iconify-icon icon="heroicons:user-group" class="text-4xl text-gray-300 mb-3"></iconify-icon>
+              <p>暂无导师信息</p>
+            </div>
+            <div class="mt-6 text-center">
+              <a href="instructors.html" class="inline-block px-6 py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">查看导师页</a>
+            </div>
+          </div>
+          
+          <!-- 学习路径 -->
+          <div class="bg-white rounded-xl shadow-soft p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">推荐学习路径</h3>
+            <div class="py-8 text-center text-gray-500">
+              <iconify-icon icon="heroicons:map" class="text-4xl text-gray-300 mb-3"></iconify-icon>
+              <p>暂无学习路径，完成课程后系统将为您推荐</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <section id="student-assignment-module" class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">我的作业任务</h2>
+          <p class="text-gray-600 mt-1">完成导师布置的作业，获得专业反馈</p>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-soft p-12 text-center mb-8">
+        <iconify-icon icon="heroicons:document-text" class="text-5xl text-gray-300 mb-4"></iconify-icon>
+        <p class="text-gray-500">暂无作业任务</p>
+      </div>
+      
+      <!-- 作业提交指南 -->
+      <div class="mt-10 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+          <iconify-icon icon="heroicons:information-circle" class="text-blue-600 mr-2"></iconify-icon>
+          作业提交指南
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white rounded-lg p-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+              <iconify-icon icon="heroicons:document-arrow-up" class="text-blue-600"></iconify-icon>
+            </div>
+            <h4 class="font-bold text-gray-900 mb-2">文件格式要求</h4>
+            <p class="text-sm text-gray-600">支持PDF、Word、Excel格式，单个文件不超过20MB</p>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mb-3">
+              <iconify-icon icon="heroicons:clock" class="text-green-600"></iconify-icon>
+            </div>
+            <h4 class="font-bold text-gray-900 mb-2">截止时间提醒</h4>
+            <p class="text-sm text-gray-600">请在截止日期前提交，逾期提交将影响评分</p>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-3">
+              <iconify-icon icon="heroicons:chat-bubble-left-right" class="text-purple-600"></iconify-icon>
+            </div>
+            <h4 class="font-bold text-gray-900 mb-2">导师反馈</h4>
+            <p class="text-sm text-gray-600">提交后7个工作日内获得详细批改和个性化建议</p>
+          </div>
+        </div>
+      </div>
+    </section><script id="vip-script-root">(function() { 
+      document.addEventListener('DOMContentLoaded', function() {
+        // 日历交互
+        const calendarDays = document.querySelectorAll('.calendar-day');
+        calendarDays.forEach(day => {
+          if (!day.classList.contains('active') && !day.classList.contains('has-session')) {
+            day.addEventListener('click', function() {
+              const date = this.textContent;
+              alert(`选择日期：${date}日`);
+              
+              // 移除其他日期的active状态
+              calendarDays.forEach(d => d.classList.remove('active'));
+              // 添加当前日期的active状态
+              this.classList.add('active');
+            });
+          }
+        });
+        
+        // 预约辅导表单
+        const quickBookBtn = document.querySelector('button:contains("立即预约")');
+        if (quickBookBtn) {
+          quickBookBtn.addEventListener('click', function() {
+            const tutorSelect = document.querySelector('select');
+            const dateInput = document.querySelector('input[type="date"]');
+            const timeSelect = document.querySelectorAll('select')[1];
+            const topicTextarea = document.querySelector('textarea');
+            
+            if (tutorSelect.value && dateInput.value && timeSelect.value && topicTextarea.value) {
+              alert(`预约成功！\n导师：${tutorSelect.value}\n日期：${dateInput.value}\n时间：${timeSelect.value}\n主题：${topicTextarea.value}`);
+            } else {
+              alert('请填写完整的预约信息');
+            }
+          });
+        }
+        
+        // 作业操作按钮
+        const viewCorrectionBtn = document.querySelector('button:contains("查看批改")');
+        if (viewCorrectionBtn) {
+          viewCorrectionBtn.addEventListener('click', function() {
+            const assignmentTitle = this.closest('.assignment-card').querySelector('h3').textContent;
+            alert(`查看 "${assignmentTitle}" 的批改详情\n\n导师评语：投资组合分析思路清晰，夏普比率计算准确，建议增加更多资产类别的分析。\n评分：85/100`);
+          });
+        }
+        
+        const submitAssignmentBtn = document.querySelector('button:contains("提交新作业")');
+        if (submitAssignmentBtn) {
+          submitAssignmentBtn.addEventListener('click', function() {
+            alert('打开作业提交表单，可以上传文件并填写作业描述');
+          });
+        }
+        
+        // 辅导记录操作
+        const cancelSessionBtn = document.querySelector('button:contains("取消预约")');
+        if (cancelSessionBtn) {
+          cancelSessionBtn.addEventListener('click', function() {
+            if (confirm('确定要取消这次辅导预约吗？')) {
+              alert('辅导预约已取消');
+              this.closest('.session-card').querySelector('span').textContent = '已取消';
+              this.closest('.session-card').querySelector('span').className = 'px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full';
+            }
+          });
+        }
+        
+        // 消息发送
+        const sendMessageBtn = document.querySelector('button:contains("发送")');
+        const messageInput = document.querySelector('input[type="text"]');
+        
+        if (sendMessageBtn && messageInput) {
+          sendMessageBtn.addEventListener('click', function() {
+            if (messageInput.value.trim()) {
+              // 创建新消息气泡
+              const chatContainer = document.querySelector('.space-y-4.mb-6');
+              const newMessage = document.createElement('div');
+              newMessage.className = 'chat-bubble user';
+              newMessage.innerHTML = `
+                <p class="text-sm">${messageInput.value}</p>
+                <p class="text-xs text-gray-500 mt-1">您 · 刚刚</p>
+              `;
+              chatContainer.appendChild(newMessage);
+              
+              // 清空输入框
+              messageInput.value = '';
+              
+              // 模拟导师回复
+              setTimeout(() => {
+                const tutorReply = document.createElement('div');
+                tutorReply.className = 'chat-bubble tutor';
+                tutorReply.innerHTML = `
+                  <p class="text-sm">收到，我会在下次辅导时回复您的问题</p>
+                  <p class="text-xs text-gray-500 mt-1">导师 · 刚刚</p>
+                `;
+                chatContainer.appendChild(tutorReply);
+                
+                // 滚动到底部
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+              }, 1000);
+            }
+          });
+          
+          // 按Enter发送消息
+          messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              sendMessageBtn.click();
+            }
+          });
+        }
+        
+        // 退出登录
+        const logoutBtn = document.querySelector('button:contains("退出登录")');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function() {
+            if (confirm('确定要退出VIP会员中心吗？')) {
+              alert('正在退出...');
+              // window.location.href = 'index.html';
+            }
+          });
+        }
+        
+        // 发送消息给导师按钮
+        const sendToTutorBtn = document.querySelector('button:contains("发送消息")');
+        if (sendToTutorBtn) {
+          sendToTutorBtn.addEventListener('click', function() {
+            messageInput.focus();
+            messageInput.scrollIntoView({ behavior: 'smooth' });
+          });
+        }
+        
+        // 视频会议按钮
+        const videoSessionBtn = document.querySelector('button:contains("预约辅导")');
+        if (videoSessionBtn) {
+          videoSessionBtn.addEventListener('click', function() {
+            document.querySelector('.quick-book-section').scrollIntoView({ behavior: 'smooth' });
+          });
+        }
+      });
+     })();</script><script id="member-script-root">(function() { 
+      document.addEventListener('DOMContentLoaded', function() {
+        // 通知按钮
+        const notificationBtn = document.querySelector('button.relative.p-2');
+        if (notificationBtn) {
+          notificationBtn.addEventListener('click', function() {
+            alert('暂无通知');
+          });
+        }
+      });
+     })();</script>
+    <script type="module" src="js/member-auth.js"></script>
+    <script type="module" src="js/member-stats.js"></script>
+    <script type="module" src="js/member-courses.js"></script>
+</body></html>

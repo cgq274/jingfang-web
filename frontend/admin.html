@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 管理员后台</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body>
+    <style type="text/tailwindcss" id="admin-styles-root">
+      @layer utilities {
+        .sidebar-transition {
+          transition: all 0.3s ease;
+        }
+        
+        .dashboard-card {
+          @apply bg-white rounded-xl shadow-soft p-6 hover-lift;
+        }
+        
+        .stat-card {
+          @apply bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100;
+        }
+        
+        .upload-area {
+          @apply border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition-colors duration-300;
+        }
+      }
+
+      /* 视频管理操作按钮（纯 CSS，保证 JS 动态生成的元素也能生效） */
+      .btn-video-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem 0.75rem; /* 4px 12px */
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        line-height: 1.25rem;
+        border-width: 1px;
+        border-style: solid;
+        cursor: pointer;
+        background-color: #ffffff;
+        transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      }
+
+      .btn-video-edit {
+        border-color: #2563eb; /* 蓝色边框 */
+        color: #2563eb;
+      }
+
+      .btn-video-edit:hover {
+        background-color: #dbeafe; /* 浅蓝背景 */
+        border-color: #1d4ed8;
+      }
+
+      .btn-video-delete {
+        border-color: #dc2626; /* 红色边框 */
+        color: #dc2626;
+      }
+
+      .btn-video-delete:hover {
+        background-color: #fee2e2; /* 浅红背景 */
+        border-color: #b91c1c;
+      }
+
+      .btn-video-save {
+        border-color: #2563eb;
+        color: #ffffff;
+        background-image: linear-gradient(to right, #2563eb, #4f46e5);
+      }
+
+      .btn-video-save:hover {
+        border-color: #1d4ed8;
+        background-image: linear-gradient(to right, #1d4ed8, #4338ca);
+      }
+
+      .btn-video-reset {
+        border-color: #d1d5db;
+        color: #374151;
+      }
+
+      .btn-video-reset:hover {
+        background-color: #f3f4f6;
+        border-color: #9ca3af;
+      }
+
+      /* 课程管理 - 新建课程按钮（不用 tailwind 颜色类，确保可见） */
+      .btn-course-create {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem; /* 8px 16px */
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        color: #ffffff;
+        background-image: linear-gradient(to right, #2563eb, #4f46e5);
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+        transition: background-image 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+      }
+
+      .btn-course-create:hover {
+        background-image: linear-gradient(to right, #1d4ed8, #4338ca);
+        box-shadow: 0 6px 14px rgba(30, 64, 175, 0.4);
+        transform: translateY(-1px);
+      }
+
+      /* 侧边栏「课程管理」下的「新建课程」：默认隐藏，悬停课程管理时显示；悬停该项时变蓝 */
+      #nav-courses-wrap .nav-course-create-option {
+        display: none;
+      }
+      #nav-courses-wrap.group:hover .nav-course-create-option,
+      #nav-courses-wrap .nav-course-create-option:hover {
+        display: flex;
+      }
+      #nav-courses-wrap .nav-course-create-option:hover {
+        background-color: #dbeafe;
+        color: #2563eb;
+        border-left-color: #2563eb;
+      }
+
+      /* 侧边栏「视频管理」下的「视频上传」「视频编辑」：默认隐藏，悬停时显示；悬停子项时变蓝 */
+      #nav-videos-wrap .nav-videos-sub {
+        display: none;
+      }
+      #nav-videos-wrap.group:hover .nav-videos-sub,
+      #nav-videos-wrap .nav-videos-sub:hover {
+        display: flex;
+      }
+      #nav-videos-wrap .nav-videos-sub:hover {
+        background-color: #dbeafe;
+        color: #2563eb;
+        border-left-color: #2563eb;
+      }
+
+      /* 根布局：约束视口，避免内容溢出 */
+      html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+      #admin-layout-root {
+        height: 100%;
+      }
+
+      /* 侧边栏：保持原布局，整体可滚动，支持收起/展开 */
+      #admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 16rem;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        transition: transform 0.25s ease;
+        z-index: 40;
+      }
+      /* 收起时整体移出视口，仅保留收起按钮可见 */
+      #admin-sidebar.sidebar-collapsed {
+        transform: translateX(-100%);
+        overflow: hidden;
+      }
+
+      /* 收起/展开按钮：固定在侧边栏右边缘中部 */
+      #sidebar-toggle-btn {
+        position: fixed;
+        left: calc(16rem - 10px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 64px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+        cursor: pointer;
+        color: #6b7280;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.06);
+        transition: left 0.25s ease, color 0.2s, background 0.2s;
+        z-index: 45;
+      }
+      #sidebar-toggle-btn:hover {
+        color: #2563eb;
+        background: #f8fafc;
+      }
+      #admin-sidebar.sidebar-collapsed ~ #sidebar-toggle-btn {
+        left: 0;
+      }
+
+      /* 主内容区：高度=视口，内部可滚动，margin 随侧边栏收起/展开过渡 */
+      #admin-main-wrap {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        overflow: hidden;
+        margin-left: 16rem;
+        transition: margin-left 0.25s ease;
+      }
+      #admin-sidebar.sidebar-collapsed ~ #admin-main-wrap {
+        margin-left: 0;
+      }
+      @media (max-width: 767px) {
+        #admin-main-wrap { margin-left: 0 !important; }
+      }
+      #admin-main-content {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    </style>
+ 
+    
+    <div id="admin-layout-root" class="min-h-screen bg-gray-50">
+      <!-- 侧边栏 -->
+      <div id="admin-sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg sidebar-transition z-40">
+        <div class="p-6 border-b">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+              <iconify-icon icon="heroicons:shield-check" class="text-xl text-red-600"></iconify-icon>
+            </div>
+            <div>
+              <h2 class="font-bold text-gray-900">管理员后台</h2>
+              <p class="text-sm text-gray-600">系统管理员</p>
+            </div>
+          </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+          <a href="#" data-section="dashboard" class="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium bg-blue-50 text-blue-600">
+            <iconify-icon icon="heroicons:home" class="text-xl"></iconify-icon>
+            <span>控制面板</span>
+          </a>
+          <div id="nav-videos-wrap" class="relative group">
+            <a href="#" data-section="videos" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+              <iconify-icon icon="heroicons:video-camera" class="text-xl"></iconify-icon>
+              <span>视频管理</span>
+            </a>
+            <a href="admin-video-upload.html" class="nav-videos-sub flex items-center space-x-3 pl-12 pr-4 py-2.5 text-sm text-gray-600 rounded-lg transition-colors duration-200 border-l-2 border-transparent ml-2 mt-0.5">
+              <iconify-icon icon="heroicons:cloud-arrow-up" class="text-lg"></iconify-icon>
+              <span>视频上传</span>
+            </a>
+            <a href="#" data-section="videos" class="nav-videos-sub flex items-center space-x-3 pl-12 pr-4 py-2.5 text-sm text-gray-600 rounded-lg transition-colors duration-200 border-l-2 border-transparent ml-2 mt-0.5">
+              <iconify-icon icon="heroicons:pencil-square" class="text-lg"></iconify-icon>
+              <span>视频编辑</span>
+            </a>
+          </div>
+          <div id="nav-courses-wrap" class="relative group">
+            <a href="#" data-section="courses" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+              <iconify-icon icon="heroicons:academic-cap" class="text-xl"></iconify-icon>
+              <span>课程管理</span>
+            </a>
+            <a href="admin-course-create.html" id="nav-course-create" class="nav-course-create-option flex items-center space-x-3 pl-12 pr-4 py-2.5 text-sm text-gray-600 rounded-lg transition-colors duration-200 border-l-2 border-transparent ml-2 mt-0.5">
+              <iconify-icon icon="heroicons:plus-circle" class="text-lg"></iconify-icon>
+              <span>新建课程</span>
+            </a>
+          </div>
+          <a href="#" data-section="users" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <iconify-icon icon="heroicons:users" class="text-xl"></iconify-icon>
+            <span>用户管理</span>
+          </a>
+          <a href="#" data-section="analytics" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <iconify-icon icon="heroicons:chart-bar" class="text-xl"></iconify-icon>
+            <span>数据分析</span>
+          </a>
+          <a href="#" data-section="settings" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <iconify-icon icon="heroicons:cog-6-tooth" class="text-xl"></iconify-icon>
+            <span>系统设置</span>
+          </a>
+          <a href="#" data-section="audit" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <iconify-icon icon="heroicons:document-text" class="text-xl"></iconify-icon>
+            <span>操作日志</span>
+          </a>
+        </nav>
+        
+        <div class="p-6 border-t">
+          <button id="logout-btn" type="button" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+            <iconify-icon icon="heroicons:arrow-left-on-rectangle" class="text-xl"></iconify-icon>
+            <span>退出登录</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 侧边栏收起/展开按钮 -->
+      <button id="sidebar-toggle-btn" type="button" title="收起侧边栏" aria-label="收起侧边栏">
+        <iconify-icon id="sidebar-toggle-icon" icon="heroicons:chevron-left" class="text-lg"></iconify-icon>
+      </button>
+      
+      <!-- 主内容区 -->
+      <div id="admin-main-wrap" class="ml-64">
+        <!-- 顶部导航 -->
+        <header class="flex-shrink-0 sticky top-0 z-30 bg-white border-b shadow-sm">
+          <div class="px-8 py-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h1 id="section-title" class="text-2xl font-bold text-gray-900">控制面板</h1>
+                <p id="section-subtitle" class="text-gray-600">查看平台关键数据总览</p>
+              </div>
+              
+              <div class="flex items-center space-x-4">
+                <button id="fullscreen-toggle" type="button" class="p-2 text-gray-600 hover:text-blue-500 hover:bg-gray-100 rounded-lg transition-colors" title="全屏/退出全屏">
+                  <iconify-icon id="fullscreen-icon" icon="heroicons:arrows-pointing-out" class="text-xl"></iconify-icon>
+                </button>
+                <div class="relative">
+                  <iconify-icon icon="heroicons:bell" class="text-2xl text-gray-600"></iconify-icon>
+                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 rounded-full overflow-hidden">
+                    <img src="https://picsum.photos/100/100?random=8" alt="管理员头像" class="w-full h-full object-cover">
+                  </div>
+                  <span id="admin-username" class="font-medium text-gray-900">张管理员</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+        
+        <!-- 主要内容 -->
+        <main id="admin-main-content" class="flex-1 p-8 pb-12">
+          <!-- 控制面板 -->
+          <section id="section-dashboard" class="admin-section space-y-8">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">总视频数</p>
+                    <h3 id="stat-total-videos" class="text-3xl font-bold text-gray-900 mt-2">0</h3>
+                  </div>
+                  <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <iconify-icon icon="heroicons:video-camera" class="text-2xl text-blue-600"></iconify-icon>
+                  </div>
+                </div>
+                <p id="stat-last7-new-videos" class="text-green-600 text-sm mt-4">· 本周新增视频 0 个</p>
+              </div>
+              
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">总课程数</p>
+                    <h3 id="stat-total-courses" class="text-3xl font-bold text-gray-900 mt-2">0</h3>
+                  </div>
+                  <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                    <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-green-600"></iconify-icon>
+                  </div>
+                </div>
+                <p id="stat-last7-new-courses" class="text-green-600 text-sm mt-4">· 本周新增课程 0 个</p>
+              </div>
+              
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">总用户数</p>
+                    <h3 id="stat-total-users" class="text-3xl font-bold text-gray-900 mt-2">0</h3>
+                  </div>
+                  <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                    <iconify-icon icon="heroicons:users" class="text-2xl text-purple-600"></iconify-icon>
+                  </div>
+                </div>
+                <p id="stat-last7-new-users" class="text-green-600 text-sm mt-4">· 本周新增注册用户 0 人</p>
+              </div>
+              
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">总收入</p>
+                    <h3 id="stat-total-revenue" class="text-3xl font-bold text-gray-900 mt-2">¥0</h3>
+                  </div>
+                  <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                    <iconify-icon icon="heroicons:currency-dollar" class="text-2xl text-amber-600"></iconify-icon>
+                  </div>
+                </div>
+                <p class="text-green-600 text-sm mt-4">· 收入数据为课程/视频价格近似汇总</p>
+              </div>
+            </div>
+            
+            <!-- 简单数据概览表 -->
+            <div class="dashboard-card">
+              <h3 class="text-xl font-bold text-gray-900 mb-4">近期动态</h3>
+              <ul class="space-y-3 text-gray-700">
+                <li id="stat-last7-new-users-text">· 本周新增注册用户 0 人</li>
+                <li id="stat-last7-new-courses-text">· 本周新增课程 0 个</li>
+                <li id="stat-last7-new-videos-text">· 本周新增视频 0 个</li>
+                <li>· 本周付费订单数据暂未接入</li>
+              </ul>
+            </div>
+          </section>
+          
+          <!-- 视频管理：仅保留视频编辑列表 -->
+          <section id="section-videos" class="admin-section space-y-8 hidden">
+          <div class="dashboard-card">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-bold text-gray-900">视频编辑</h3>
+              <div class="flex space-x-3">
+                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                  筛选
+                </button>
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                  批量操作
+                </button>
+              </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b">
+                    <th class="text-left py-3 px-4 text-gray-700 font-medium">视频名称</th>
+                    <th class="text-left py-3 px-4 text-gray-700 font-medium">课程</th>
+                    <th class="text-left py-3 px-4 text-gray-700 font-medium">价格</th>
+                    <th class="text-left py-3 px-4 text-gray-700 font-medium">时长</th>
+                    <th class="text-left py-3 px-4 text-gray-700 font-medium">状态</th>
+                    <th class="text-left py-3 px-4 text-gray-700 font-medium">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="video-table-body">
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-100">
+              <p id="video-table-summary" class="text-sm text-gray-600">共 0 条视频</p>
+              <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-gray-500">每页</span>
+                  <select id="video-page-size" class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  <span class="text-sm text-gray-500">条</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" id="video-prev-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-colors">
+                    <iconify-icon icon="heroicons:chevron-left" class="text-base"></iconify-icon>
+                    上一页
+                  </button>
+                  <span id="video-page-info" class="min-w-[7rem] text-center text-sm text-gray-600 py-2">第 1 页 / 共 1 页</span>
+                  <button type="button" id="video-next-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-colors">
+                    下一页
+                    <iconify-icon icon="heroicons:chevron-right" class="text-base"></iconify-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </section>
+          
+          <!-- 课程管理 -->
+          <section id="section-courses" class="admin-section space-y-8 hidden">
+            <div class="dashboard-card">
+              <h3 class="text-xl font-bold text-gray-900 mb-6">课程列表</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead>
+                    <tr class="border-b">
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">课程名称</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">分类</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">价格</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">包含视频数</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">状态</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="course-table-body">
+                  </tbody>
+                </table>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-100">
+                <p id="course-table-summary" class="text-sm text-gray-600">共 0 门课程</p>
+                <div class="flex flex-wrap items-center gap-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500">每页</span>
+                    <select id="course-page-size" class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    <span class="text-sm text-gray-500">条</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" id="course-prev-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-colors">
+                      <iconify-icon icon="heroicons:chevron-left" class="text-base"></iconify-icon>
+                      上一页
+                    </button>
+                    <span id="course-page-info" class="min-w-[7rem] text-center text-sm text-gray-600 py-2">第 1 页 / 共 1 页</span>
+                    <button type="button" id="course-next-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-colors">
+                      下一页
+                      <iconify-icon icon="heroicons:chevron-right" class="text-base"></iconify-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 用户管理 -->
+          <section id="section-users" class="admin-section space-y-8 hidden">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">总用户数</p>
+                    <p id="user-stat-total" class="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                  <iconify-icon icon="heroicons:users" class="text-4xl text-blue-500"></iconify-icon>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">管理员</p>
+                    <p id="user-stat-admins" class="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                  <iconify-icon icon="heroicons:shield-check" class="text-4xl text-green-500"></iconify-icon>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">普通用户</p>
+                    <p id="user-stat-members" class="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                  <iconify-icon icon="heroicons:user" class="text-4xl text-purple-500"></iconify-icon>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1">今日新增</p>
+                    <p id="user-stat-today" class="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                  <iconify-icon icon="heroicons:arrow-trending-up" class="text-4xl text-orange-500"></iconify-icon>
+                </div>
+              </div>
+            </div>
+
+            <!-- 用户列表 -->
+            <div class="dashboard-card">
+              <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">用户列表</h3>
+                <div class="flex gap-2">
+                  <button id="user-batch-delete-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed hidden">批量删除</button>
+                  <button id="user-export-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">导出CSV</button>
+                </div>
+              </div>
+
+              <!-- 筛选栏 -->
+              <div class="flex flex-wrap gap-4 mb-6 pb-4 border-b">
+                <input id="user-search-input" type="text" class="px-4 py-2 border border-gray-300 rounded-lg flex-1 min-w-64" placeholder="搜索用户名 / 手机号 / 邮箱">
+                <select id="user-filter-role" class="px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="">全部角色</option>
+                  <option value="admin">管理员</option>
+                  <option value="member">普通用户</option>
+                </select>
+                <select id="user-filter-status" class="px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="">全部状态</option>
+                  <option value="active">正常</option>
+                  <option value="disabled">已禁用</option>
+                </select>
+                <button id="user-filter-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">筛选</button>
+                <button id="user-reset-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">重置</button>
+              </div>
+
+              <!-- 表格 -->
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead>
+                    <tr class="border-b">
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium w-12">
+                        <input type="checkbox" id="user-select-all" class="rounded border-gray-300">
+                      </th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">用户名</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">手机号</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">邮箱</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">角色</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">状态</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">注册时间</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="user-table-body">
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- 分页 -->
+              <div class="flex items-center justify-between mt-4">
+                <p id="user-table-summary" class="text-gray-600 text-sm">共 0 位用户</p>
+                <div class="flex gap-2">
+                  <button id="user-prev-btn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">上一页</button>
+                  <span id="user-page-info" class="px-4 py-2 text-gray-700">第 1 页 / 共 1 页</span>
+                  <button id="user-next-btn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">下一页</button>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 数据分析 -->
+          <section id="section-analytics" class="admin-section space-y-8 hidden">
+            <div class="dashboard-card">
+              <h3 class="text-xl font-bold text-gray-900 mb-4">核心数据概览</h3>
+              <p class="text-gray-600 mb-6">近 7 天增长趋势、转化率、热门课程与订单情况，便于了解平台运营效果。</p>
+
+              <!-- 指标卡片：转化率、订单概览 -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                  <h4 class="text-sm font-semibold text-gray-700 mb-1">注册用户转化率</h4>
+                  <p class="text-2xl font-bold text-blue-700"><span id="analytics-conversion-rate">0</span>%</p>
+                  <p class="text-xs text-gray-500 mt-1"><span id="analytics-enrolled-users">0</span> 人已加入课程 / <span id="analytics-total-users">0</span> 人总注册</p>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
+                  <h4 class="text-sm font-semibold text-gray-700 mb-1">付费订单概览</h4>
+                  <p class="text-2xl font-bold text-emerald-700">¥<span id="analytics-paid-revenue">0</span></p>
+                  <p class="text-xs text-gray-500 mt-1">已支付订单 <span id="analytics-total-orders">0</span> 笔</p>
+                </div>
+              </div>
+
+              <!-- 近 7 天新增趋势图 -->
+              <div class="mb-8">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3">近 7 天新增趋势</h4>
+                <div id="analytics-trend-chart" class="w-full rounded-xl border border-gray-100 bg-white" style="height: 260px;"></div>
+              </div>
+
+              <!-- 课程加入人数 TOP5（热门课程） -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="text-sm font-semibold text-gray-800 mb-3">课程加入人数 TOP5（热门课程）</h4>
+                  <div id="analytics-top-chart" class="w-full rounded-xl border border-gray-100 bg-white" style="height: 240px;"></div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <h4 class="text-sm font-semibold text-gray-800 mb-3">热门课程列表</h4>
+                  <ul id="analytics-top-courses" class="space-y-2 text-gray-700 text-sm">
+                    <li class="text-gray-500">加载中...</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 系统设置 -->
+          <section id="section-settings" class="admin-section space-y-8 hidden">
+            <div class="dashboard-card">
+              <h3 class="text-xl font-bold text-gray-900 mb-6">系统设置</h3>
+              <p class="text-gray-600 text-sm mb-6">以下设置将影响前台展示（标题、公告、页脚、SEO 等）。</p>
+
+              <!-- 基础信息 -->
+              <div class="mb-8">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">基础信息</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-gray-700 font-medium mb-2">网站标题</label>
+                    <input id="setting-site-title" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：敬方教育 - 金融培训平台">
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-2">首页公告</label>
+                    <textarea id="setting-home-announcement" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="面向所有用户的公告，显示在首页顶部"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 联系与备案 -->
+              <div class="mb-8">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">联系与备案</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-gray-700 font-medium mb-2">客服电话</label>
+                    <input id="setting-support-phone" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：400-123-4567">
+                  </div>
+                  <div>
+                    <label class="block text-gray-700 font-medium mb-2">客服邮箱</label>
+                    <input id="setting-support-email" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：contact@example.com">
+                  </div>
+                  <div>
+                    <label class="block text-gray-700 font-medium mb-2">备案号（ICP）</label>
+                    <input id="setting-icp-number" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：京ICP备xxxxxxxx号">
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-2">底部版权/文案</label>
+                    <input id="setting-footer-text" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：© 2025 敬方教育. 保留所有权利.">
+                  </div>
+                  <div>
+                    <label class="block text-gray-700 font-medium mb-2">页脚副标题</label>
+                    <input id="setting-footer-slogan" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：金融培训专家（显示在首页页脚公司名下方）">
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-2">页脚简介</label>
+                    <textarea id="setting-footer-intro" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="首页页脚公司信息下方的简介文字"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SEO 与展示 -->
+              <div class="mb-8">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">SEO 与展示</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-2">网站描述（SEO）</label>
+                    <textarea id="setting-site-description" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="用于搜索引擎摘要，建议 80–160 字"></textarea>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-2">网站关键词（SEO）</label>
+                    <input id="setting-site-keywords" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="如：金融培训,在线课程,敬方教育（逗号分隔）">
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end mt-6">
+                <button id="settings-save-btn" class="btn-video-action btn-video-save">保存设置</button>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 操作日志 -->
+          <section id="section-audit" class="admin-section space-y-8 hidden">
+            <div class="dashboard-card">
+              <h3 class="text-xl font-bold text-gray-900 mb-6">操作日志</h3>
+              
+              <!-- 筛选条件 -->
+              <div class="flex flex-wrap gap-4 mb-6">
+                <select id="audit-filter-action" class="px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="">全部操作</option>
+                  <option value="create">创建</option>
+                  <option value="update">更新</option>
+                  <option value="delete">删除</option>
+                  <option value="login">登录</option>
+                  <option value="login_failed">登录失败</option>
+                </select>
+                <select id="audit-filter-resource" class="px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="">全部资源</option>
+                  <option value="video">视频</option>
+                  <option value="course">课程</option>
+                  <option value="user">用户</option>
+                  <option value="settings">系统设置</option>
+                  <option value="auth">认证</option>
+                </select>
+                <input id="audit-filter-username" type="text" class="px-4 py-2 border border-gray-300 rounded-lg" placeholder="搜索用户名">
+                <button id="audit-filter-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">筛选</button>
+                <button id="audit-refresh-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">刷新</button>
+                <button id="audit-export-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">导出CSV</button>
+              </div>
+              
+              <!-- 日志列表 -->
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead>
+                    <tr class="border-b">
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">时间</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">操作人</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">操作</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">资源类型</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">资源名称</th>
+                      <th class="text-left py-3 px-4 text-gray-700 font-medium">IP地址</th>
+                    </tr>
+                  </thead>
+                  <tbody id="audit-table-body">
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- 分页（与视频/课程管理样式一致） -->
+              <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-100">
+                <p id="audit-table-summary" class="text-sm text-gray-600">共 0 条记录</p>
+                <div class="flex flex-wrap items-center gap-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500">每页</span>
+                    <select id="audit-page-size" class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    <span class="text-sm text-gray-500">条</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" id="audit-prev-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-colors">
+                      <iconify-icon icon="heroicons:chevron-left" class="text-base"></iconify-icon>
+                      上一页
+                    </button>
+                    <span id="audit-page-info" class="min-w-[7rem] text-center text-sm text-gray-600 py-2">第 1 页 / 共 1 页</span>
+                    <button type="button" id="audit-next-btn" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-colors">
+                      下一页
+                      <iconify-icon icon="heroicons:chevron-right" class="text-base"></iconify-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+ </div>
+<script type="module" src="js/admin-auth.js"></script>
+<script type="module" src="js/admin-videos.js"></script>
+<script type="module" src="js/admin-users.js"></script>
+<script type="module" src="js/admin-courses.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script type="module" src="js/admin-stats.js"></script>
+<script type="module" src="js/admin-settings.js"></script>
+<script type="module" src="js/admin-audit.js"></script>
+    <script id="admin-script-root">
+      document.addEventListener('DOMContentLoaded', function() {
+        // 顶部“上传区域”目前只做说明，不做真实上传
+        
+        // 表格行点击效果
+        const tableRows = document.querySelectorAll('tbody tr');
+        tableRows.forEach(row => {
+          row.addEventListener('click', function(e) {
+            if (!e.target.closest('button')) {
+              this.classList.toggle('bg-blue-50');
+            }
+          });
+        });
+        
+        // 操作按钮事件（全屏按钮已改用 text-blue-500 避免误匹配）
+        const editButtons = document.querySelectorAll('button[class*="text-blue-600"]');
+        editButtons.forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            alert('编辑视频功能');
+          });
+        });
+        
+        const deleteButtons = document.querySelectorAll('button[class*="text-red-600"]');
+        deleteButtons.forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (confirm('确定要删除这个视频吗？')) {
+              alert('视频已删除');
+            }
+          });
+        });
+        
+        // 退出登录由 js/admin-auth.js 处理
+        
+        // 侧边栏收起/展开
+        const sidebar = document.getElementById('admin-sidebar');
+        const mainContent = document.getElementById('admin-main-wrap');
+        const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+        const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+        const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed';
+        
+        function setSidebarCollapsed(collapsed) {
+          if (collapsed) {
+            sidebar.classList.add('sidebar-collapsed');
+            if (sidebarToggleIcon) sidebarToggleIcon.setAttribute('icon', 'heroicons:chevron-right');
+            if (sidebarToggleBtn) {
+              sidebarToggleBtn.setAttribute('title', '展开侧边栏');
+              sidebarToggleBtn.setAttribute('aria-label', '展开侧边栏');
+            }
+          } else {
+            sidebar.classList.remove('sidebar-collapsed');
+            if (sidebarToggleIcon) sidebarToggleIcon.setAttribute('icon', 'heroicons:chevron-left');
+            if (sidebarToggleBtn) {
+              sidebarToggleBtn.setAttribute('title', '收起侧边栏');
+              sidebarToggleBtn.setAttribute('aria-label', '收起侧边栏');
+            }
+          }
+          try { localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? '1' : '0'); } catch (_) {}
+          if (typeof window.refreshAnalyticsCharts === 'function') setTimeout(window.refreshAnalyticsCharts, 300);
+        }
+        
+        function isSidebarCollapsed() {
+          return sidebar && sidebar.classList.contains('sidebar-collapsed');
+        }
+        
+        if (sidebarToggleBtn && sidebar) {
+          const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+          if (saved === '1') setSidebarCollapsed(true);
+          sidebarToggleBtn.addEventListener('click', function() {
+            setSidebarCollapsed(!isSidebarCollapsed());
+          });
+        }
+        
+        // 侧边栏响应式（小屏隐藏侧边栏和收起按钮）
+        function checkScreenSize() {
+          if (!sidebar || !mainContent) return;
+          if (window.innerWidth < 768) {
+            sidebar.classList.add('-translate-x-full');
+            if (sidebarToggleBtn) sidebarToggleBtn.style.display = 'none';
+          } else {
+            sidebar.classList.remove('-translate-x-full');
+            if (sidebarToggleBtn) sidebarToggleBtn.style.display = '';
+          }
+        }
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+
+        // 左侧菜单与模块切换
+        const navLinks = document.querySelectorAll('nav a[data-section]');
+        const sections = document.querySelectorAll('.admin-section');
+        const sectionTitle = document.getElementById('section-title');
+        const sectionSubtitle = document.getElementById('section-subtitle');
+
+        const sectionMeta = {
+          dashboard: {
+            title: '控制面板',
+            subtitle: '查看平台关键数据总览',
+          },
+          videos: {
+            title: '视频管理',
+            subtitle: '上传新的培训视频并管理现有内容',
+          },
+          courses: {
+            title: '课程管理',
+            subtitle: '配置课程信息并维护课程内容结构',
+          },
+          users: {
+            title: '用户管理',
+            subtitle: '查看并管理平台注册用户',
+          },
+          analytics: {
+            title: '数据分析',
+            subtitle: '查看平台数据指标与趋势',
+          },
+          settings: {
+            title: '系统设置',
+            subtitle: '配置网站基础信息和系统参数',
+          },
+          audit: {
+            title: '操作日志',
+            subtitle: '查看管理员操作记录和系统审计信息',
+          },
+        };
+
+        function switchSection(targetKey) {
+          // 切换可见模块（直接控制 display，避免部分样式类覆盖 hidden）
+          sections.forEach((sec) => {
+            if (sec.id === `section-${targetKey}`) {
+              sec.style.display = '';
+            } else {
+              sec.style.display = 'none';
+            }
+          });
+
+          // 更新菜单高亮
+          navLinks.forEach((link) => {
+            if (link.dataset.section === targetKey) {
+              link.classList.add('bg-blue-50', 'text-blue-600');
+              link.classList.remove('text-gray-700');
+            } else {
+              link.classList.remove('bg-blue-50', 'text-blue-600');
+              link.classList.add('text-gray-700');
+            }
+          });
+
+          // 更新标题
+          const meta = sectionMeta[targetKey];
+          if (meta) {
+            if (sectionTitle) sectionTitle.textContent = meta.title;
+            if (sectionSubtitle) sectionSubtitle.textContent = meta.subtitle;
+          }
+          // 切换到数据分析时让 ECharts 图表重新计算尺寸
+          if (targetKey === 'analytics' && typeof window.refreshAnalyticsCharts === 'function') {
+            setTimeout(window.refreshAnalyticsCharts, 100);
+          }
+        }
+
+        navLinks.forEach((link) => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const key = link.dataset.section;
+            if (key) switchSection(key);
+          });
+        });
+
+        // 默认进入控制面板
+        switchSection('dashboard');
+
+        // 全屏切换
+        const fullscreenToggle = document.getElementById('fullscreen-toggle');
+        const fullscreenIcon = document.getElementById('fullscreen-icon');
+        if (fullscreenToggle && fullscreenIcon) {
+          fullscreenToggle.addEventListener('click', function() {
+            if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().then(function() {
+                fullscreenIcon.setAttribute('icon', 'heroicons:arrows-pointing-in');
+              }).catch(function() {});
+            } else {
+              document.exitFullscreen().then(function() {
+                fullscreenIcon.setAttribute('icon', 'heroicons:arrows-pointing-out');
+              }).catch(function() {});
+            }
+          });
+          document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+              fullscreenIcon.setAttribute('icon', 'heroicons:arrows-pointing-out');
+            } else {
+              fullscreenIcon.setAttribute('icon', 'heroicons:arrows-pointing-in');
+            }
+          });
+        }
+      });
+    </script>
+
+    <!-- 课程下视频查看弹窗（管理员预览课程内容） -->
+    <div
+      id="course-videos-modal"
+      class="fixed inset-0 bg-black bg-opacity-50"
+      style="display: none; z-index: 9998;"
+    >
+      <div
+        id="course-videos-modal-backdrop"
+        class="w-full h-full flex items-center justify-center px-4"
+      >
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between px-6 py-4 border-b">
+            <div>
+              <h3
+                id="course-videos-modal-title"
+                class="text-xl font-bold text-gray-900"
+              >
+                课程视频
+              </h3>
+              <p
+                id="course-videos-modal-subtitle"
+                class="text-sm text-gray-600 mt-1"
+              >
+                查看该课程下已关联的视频，并可直接预览播放。
+              </p>
+            </div>
+            <button
+              id="course-videos-modal-close"
+              class="text-gray-400 hover:text-gray-600 cursor-pointer"
+              type="button"
+            >
+              关闭
+            </button>
+          </div>
+          <div class="flex flex-1 overflow-hidden">
+            <div class="w-full md:w-2/5 border-r border-gray-100 overflow-y-auto">
+              <div id="course-videos-list" class="p-4 space-y-3 text-sm text-gray-800">
+              </div>
+            </div>
+            <div class="hidden md:flex flex-1 flex-col bg-black">
+              <video
+                id="course-videos-player"
+                class="w-full h-full"
+                controls
+                controlsList="nodownload"
+              ></video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 用户编辑弹窗（放在 body 顶层，确保不被其他模块遮挡） -->
+    <div id="user-edit-modal" class="fixed inset-0 bg-black bg-opacity-50" style="display: none; z-index: 9999;">
+      <!-- 弹窗主体稍微收窄，避免过宽 -->
+      <div class="bg-white rounded-xl shadow-xl w-full mx-4 max-w-lg md:max-w-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+          <h3 class="text-xl font-bold text-gray-900">编辑用户</h3>
+          <button id="user-edit-close" class="text-gray-400 hover:text-gray-600 cursor-pointer">
+            <iconify-icon icon="heroicons:x-mark" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <form id="user-edit-form" class="p-6">
+          <input type="hidden" id="edit-user-id">
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">用户名 <span class="text-red-500">*</span></label>
+                <input type="text" id="edit-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">手机号 <span class="text-red-500">*</span></label>
+                <input type="text" id="edit-phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+                <input type="email" id="edit-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">角色 <span class="text-red-500">*</span></label>
+                <select id="edit-role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                  <option value="member">普通用户</option>
+                  <option value="admin">管理员</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">状态 <span class="text-red-500">*</span></label>
+                <select id="edit-status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                  <option value="active">正常</option>
+                  <option value="disabled">已禁用</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">注册时间</label>
+                <p id="edit-createdAt" class="text-gray-600 text-sm py-2"></p>
+              </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+              <button
+                type="button"
+                id="user-edit-cancel"
+                class="btn-video-action btn-video-reset"
+              >
+                取消
+              </button>
+              <button
+                type="submit"
+                class="btn-video-action btn-video-save"
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+</body></html>

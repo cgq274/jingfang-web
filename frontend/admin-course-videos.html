@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>敬方教育 - 课程视频管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./js/tailwindcss.js"></script>
+    <script src="./js/iconify-icon.min.js"></script>
+  </head>
+  <body class="bg-gray-50">
+    <style type="text/tailwindcss">
+      @layer utilities {
+        /* 复用后台页面的卡片与阴影风格，保持金融网站统一视觉 */
+        .shadow-soft {
+          box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+        .page-card {
+          @apply bg-white rounded-2xl shadow-soft border border-slate-100;
+        }
+        .hover-row {
+          @apply hover:bg-blue-50/60 cursor-pointer transition-colors;
+        }
+      }
+    </style>
+
+    <div class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-50 to-slate-100">
+      <!-- 顶部栏 -->
+      <header class="bg-white/95 border-b shadow-sm backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <button
+              id="back-to-admin-btn"
+              class="flex items-center text-gray-600 hover:text-blue-600 text-sm"
+              type="button"
+            >
+              <iconify-icon icon="heroicons:arrow-left" class="text-lg mr-1"></iconify-icon>
+              返回后台
+            </button>
+            <div class="h-5 w-px bg-gray-200"></div>
+            <div>
+              <h1 id="course-videos-title" class="text-xl font-bold text-gray-900">
+                课程视频管理
+              </h1>
+              <p id="course-videos-subtitle" class="text-xs sm:text-sm text-gray-600 mt-0.5">
+                加载中...
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 主内容 -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- 顶部概览 -->
+        <section class="page-card p-5 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p id="course-name-label" class="text-sm text-gray-500 mb-1">
+              当前课程
+            </p>
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-10 rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center text-[11px] text-slate-400" id="course-cover-wrapper">
+                <span id="course-cover-placeholder">封面</span>
+                <img
+                  id="course-cover-img"
+                  alt="课程封面"
+                  class="w-full h-full object-cover hidden"
+                />
+              </div>
+              <h2 id="course-name" class="text-2xl font-bold text-gray-900">
+                -
+              </h2>
+            </div>
+          </div>
+          <div class="flex gap-6 text-sm text-gray-600">
+            <div>
+              <p class="text-xs text-gray-500">视频数量</p>
+              <p id="course-video-count" class="text-xl font-semibold text-blue-700">0</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">提示</p>
+              <p class="max-w-xs leading-relaxed">
+                在「视频管理」中上传视频并选择本课程，即可在下方列表中统一查看和播放，便于检查课程内容是否完整。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 视频列表 + 播放器 -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- 左侧：视频列表 -->
+          <div class="page-card p-4 lg:col-span-1 flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-gray-900">课程视频列表</h3>
+              <span
+                id="course-videos-small-count"
+                class="text-xs text-gray-500"
+              ></span>
+            </div>
+            <div
+              id="course-videos-list"
+              class="flex-1 overflow-y-auto text-sm text-gray-800"
+              style="max-height: 68vh"
+            >
+              <p class="text-xs text-gray-500 py-2">
+                加载中...
+              </p>
+            </div>
+          </div>
+
+          <!-- 右侧：视频预览 -->
+          <div class="page-card p-4 lg:col-span-2 flex flex-col">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+              视频预览
+            </h3>
+            <!-- 16:9 比例播放器，避免高度占满整页 -->
+            <div class="relative w-full rounded-xl overflow-hidden bg-black mb-4">
+              <div class="pt-[56.25%]"></div>
+              <video
+                id="course-video-player"
+                class="absolute inset-0 w-full h-full"
+                controls
+                controlsList="nodownload"
+              ></video>
+              <div
+                id="course-video-empty-tip"
+                class="absolute inset-0 flex items-center justify-center text-sm text-gray-300"
+              >
+                从左侧选择一个视频进行播放
+              </div>
+            </div>
+            <div class="space-y-1 text-sm">
+              <p
+                id="course-video-current-title"
+                class="font-medium text-gray-900"
+              >
+                暂未选择视频
+              </p>
+              <p
+                id="course-video-current-meta"
+                class="text-xs text-gray-500"
+              >
+              </p>
+              <p
+                id="course-video-current-desc"
+                class="text-xs text-gray-600 mt-1 leading-relaxed"
+              >
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/admin-course-videos.js"></script>
+  </body>
+</html>
+

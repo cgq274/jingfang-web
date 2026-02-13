@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>敬方教育 - 新建课程</title>
+    <script src="./js/tailwindcss.js"></script>
+    <script src="./js/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @layer components {
+        .form-card {
+          @apply bg-white rounded-xl border border-gray-200/80 shadow-sm overflow-hidden;
+        }
+        .form-section-title {
+          @apply text-sm font-semibold text-gray-900 tracking-tight mb-4 pb-2 border-b border-gray-100;
+        }
+        .form-label {
+          @apply block text-sm font-medium text-gray-700 mb-1.5;
+        }
+        .form-input {
+          @apply w-full px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500;
+        }
+        .form-input:hover {
+          @apply border-gray-400;
+        }
+        .form-hint {
+          @apply mt-1.5 text-xs text-gray-500 leading-relaxed;
+        }
+        .btn-primary {
+          @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-60 disabled:pointer-events-none;
+        }
+        .btn-ghost {
+          @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 transition-colors;
+        }
+        .info-box {
+          @apply flex gap-3 p-4 rounded-lg bg-blue-50/80 border border-blue-100 text-sm text-gray-700;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-50/80 antialiased">
+    <div class="min-h-screen">
+      <!-- 顶栏：导航与标题（编辑模式下由 JS 隐藏） -->
+      <header id="course-form-header" class="sticky top-0 z-10 bg-white border-b border-gray-200/80">
+        <div class="px-4 sm:px-6 py-4">
+          <nav class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+            <a href="admin.html" class="hover:text-gray-700 transition-colors">后台</a>
+            <iconify-icon icon="heroicons:chevron-right" class="text-gray-400 text-base"></iconify-icon>
+            <a href="admin.html" class="hover:text-gray-700 transition-colors">课程管理</a>
+            <iconify-icon icon="heroicons:chevron-right" class="text-gray-400 text-base"></iconify-icon>
+            <span class="text-gray-900 font-medium">新建课程</span>
+          </nav>
+          <div class="flex items-center gap-3">
+            <a
+              href="admin.html"
+              class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              title="返回后台"
+            >
+              <iconify-icon icon="heroicons:arrow-left" class="text-xl"></iconify-icon>
+            </a>
+            <div>
+              <h1 class="text-xl font-semibold text-gray-900">新建课程</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 主内容 -->
+      <main class="max-w-2xl mx-auto px-4 sm:px-6 py-8">
+        <div class="form-card">
+          <form id="course-create-form" class="p-6 sm:p-8">
+            <!-- 基本信息 -->
+            <div class="mb-8">
+              <h2 class="form-section-title">基本信息</h2>
+              <div class="space-y-5">
+                <div>
+                  <label for="course-title" class="form-label">课程名称 <span class="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    id="course-title"
+                    name="title"
+                    class="form-input"
+                    placeholder="例如：金融基础入门"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+                <div>
+                  <label for="course-category" class="form-label">分类</label>
+                  <input
+                    type="text"
+                    id="course-category"
+                    name="category"
+                    class="form-input"
+                    placeholder="例如：金融基础、投资理财"
+                    autocomplete="off"
+                  />
+                  <p class="form-hint">用于前台筛选与展示，可不填。</p>
+                </div>
+                <div>
+                  <label for="course-description" class="form-label">课程描述</label>
+                  <textarea
+                    id="course-description"
+                    name="description"
+                    rows="4"
+                    class="form-input resize-y min-h-[100px]"
+                    placeholder="简要介绍课程内容与适合人群，便于学员了解..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- 价格与状态 -->
+            <div class="mb-8">
+              <h2 class="form-section-title">价格与状态</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label for="course-price" class="form-label">价格 (¥) <span class="text-red-500">*</span></label>
+                  <input
+                    type="number"
+                    id="course-price"
+                    name="price"
+                    class="form-input"
+                    placeholder="0"
+                    step="0.01"
+                    min="0"
+                    value="0"
+                    required
+                  />
+                  <p class="form-hint">0 表示免费。</p>
+                </div>
+                <div>
+                  <label for="course-status" class="form-label">状态 <span class="text-red-500">*</span></label>
+                  <select id="course-status" name="status" class="form-input" required>
+                    <option value="published">上架中</option>
+                    <option value="free">免费</option>
+                    <option value="archived">已下架</option>
+                  </select>
+                  <p class="form-hint">上架后学员可见并可购买。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 说明 -->
+            <div class="mb-8">
+              <h2 class="form-section-title">说明</h2>
+              <div class="info-box" role="status">
+                <iconify-icon icon="heroicons:information-circle" class="flex-shrink-0 text-blue-600 text-lg"></iconify-icon>
+                <div>
+                  <p class="font-medium text-gray-800 mb-0.5">包含视频数</p>
+                  <p class="text-gray-600 leading-relaxed">
+                    新建后为 0。创建课程后，在「视频管理」中上传视频并选择本课程，或在「课程管理」中进入该课程的「查看视频」进行管理，系统将自动统计包含的视频数。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 操作 -->
+            <div class="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-gray-100">
+              <a href="admin.html" class="btn-ghost">取消</a>
+              <button type="submit" id="course-submit-btn" class="btn-primary">
+                <iconify-icon icon="heroicons:plus" class="text-lg"></iconify-icon>
+                创建课程
+              </button>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="js/admin-course-create.js"></script>
+  </body>
+</html>

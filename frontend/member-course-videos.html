@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>敬方教育 - 课程视频</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.replace("index.html");
+      }
+    </script>
+    <script src="./js/tailwindcss.js"></script>
+    <script src="./js/iconify-icon.min.js"></script>
+  </head>
+  <body class="bg-gray-50">
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .shadow-soft {
+          box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+        .page-card {
+          @apply bg-white rounded-2xl shadow-soft border border-slate-100;
+        }
+        .hover-row {
+          @apply hover:bg-blue-50/60 cursor-pointer transition-colors;
+        }
+        /* 进度条：轨道透明，已观看部分白色 */
+        .video-progress-wrap {
+          height: 5px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.2);
+          position: relative;
+          overflow: visible;
+        }
+        .video-progress-fill {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          border-radius: 999px;
+          background: #fff;
+          pointer-events: none;
+          transition: width 0.1s ease;
+        }
+        #video-progress {
+          -webkit-appearance: none;
+          appearance: none;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          background: transparent;
+          cursor: pointer;
+        }
+        #video-progress::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #fff;
+          cursor: pointer;
+          box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+        }
+        #video-progress::-moz-range-thumb {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #fff;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+        }
+        #video-progress::-webkit-slider-runnable-track,
+        #video-progress::-moz-range-track {
+          background: transparent;
+        }
+        /* 音量条：同上，轨道透明，已选音量部分白色 */
+        .video-volume-wrap {
+          height: 5px;
+          width: 96px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.2);
+          position: relative;
+          overflow: visible;
+        }
+        .video-volume-fill {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          border-radius: 999px;
+          background: #fff;
+          pointer-events: none;
+          transition: width 0.1s ease;
+        }
+        #video-volume {
+          -webkit-appearance: none;
+          appearance: none;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          background: transparent;
+          cursor: pointer;
+        }
+        #video-volume::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #fff;
+          cursor: pointer;
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+        }
+        #video-volume::-moz-range-thumb {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #fff;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+        }
+        #video-volume::-webkit-slider-runnable-track,
+        #video-volume::-moz-range-track {
+          background: transparent;
+        }
+      }
+    </style>
+
+    <div class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-50 to-slate-100">
+      <!-- 顶部栏 -->
+      <header class="bg-white/95 border-b shadow-sm backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a
+              id="back-to-member-btn"
+              href="member.html"
+              class="flex items-center text-gray-600 hover:text-blue-600 text-sm"
+            >
+              <iconify-icon icon="heroicons:arrow-left" class="text-lg mr-1"></iconify-icon>
+              返回会员中心
+            </a>
+            <div class="h-5 w-px bg-gray-200"></div>
+            <div>
+              <h1 id="course-videos-title" class="text-xl font-bold text-gray-900">
+                课程视频
+              </h1>
+              <p id="course-videos-subtitle" class="text-xs sm:text-sm text-gray-600 mt-0.5">
+                加载中...
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 主内容 -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- 顶部概览 -->
+        <section class="page-card p-5 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p id="course-name-label" class="text-sm text-gray-500 mb-1">
+              当前课程
+            </p>
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-10 rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center text-[11px] text-slate-400" id="course-cover-wrapper">
+                <span id="course-cover-placeholder">封面</span>
+                <img
+                  id="course-cover-img"
+                  alt="课程封面"
+                  class="w-full h-full object-cover hidden"
+                />
+              </div>
+              <h2 id="course-name" class="text-2xl font-bold text-gray-900">
+                -
+              </h2>
+            </div>
+          </div>
+          <div class="flex gap-6 text-sm text-gray-600">
+            <div>
+              <p class="text-xs text-gray-500">视频数量</p>
+              <p id="course-video-count" class="text-xl font-semibold text-blue-700">0</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">提示</p>
+              <p class="max-w-xs leading-relaxed">
+                从左侧列表选择视频即可在右侧播放观看。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 视频列表 + 播放器 -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- 左侧：视频列表 -->
+          <div class="page-card p-4 lg:col-span-1 flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-gray-900">课程视频列表</h3>
+              <span
+                id="course-videos-small-count"
+                class="text-xs text-gray-500"
+              ></span>
+            </div>
+            <div
+              id="course-videos-list"
+              class="flex-1 overflow-y-auto text-sm text-gray-800"
+              style="max-height: 68vh"
+            >
+              <p class="text-xs text-gray-500 py-2">
+                加载中...
+              </p>
+            </div>
+          </div>
+
+          <!-- 右侧：视频播放 -->
+          <div class="page-card p-4 lg:col-span-2 flex flex-col">
+            <h3 class="text-sm font-semibold text-gray-900 mb-3">
+              视频播放
+            </h3>
+            <div id="video-player-wrap" class="relative w-full rounded-xl overflow-hidden bg-black mb-4 group">
+              <div class="pt-[56.25%]"></div>
+              <video
+                id="course-video-player"
+                class="absolute inset-0 w-full h-full"
+                controlsList="nodownload"
+                playsinline
+              ></video>
+              <div
+                id="course-video-empty-tip"
+                class="absolute inset-0 flex items-center justify-center text-sm text-gray-300"
+              >
+                从左侧选择一个视频进行播放
+              </div>
+              <!-- 自定义控制条 -->
+              <div id="video-controls-bar" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent px-3 py-2 flex flex-col gap-1 hidden" style="padding-bottom: 10px;">
+                <div class="video-progress-wrap w-full">
+                  <div id="video-progress-fill" class="video-progress-fill" style="width: 0%"></div>
+                  <input type="range" id="video-progress" min="0" max="100" value="0" step="0.1" title="播放进度" aria-label="播放进度" />
+                </div>
+                <div class="flex items-center justify-between gap-2 text-white/90 text-sm">
+                  <div class="flex items-center gap-2">
+                    <button type="button" id="video-play-pause" class="p-1.5 rounded hover:bg-white/20 transition-colors" title="播放/暂停" aria-label="播放或暂停">
+                      <iconify-icon id="video-play-icon" icon="heroicons:play" class="text-xl"></iconify-icon>
+                    </button>
+                    <span id="video-time-current">0:00</span>
+                    <span>/</span>
+                    <span id="video-time-duration">0:00</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <div class="relative flex items-center">
+                      <button type="button" id="video-volume-btn" class="p-1.5 rounded hover:bg-white/20 transition-colors" title="音量" aria-label="音量">
+                        <iconify-icon id="video-volume-icon" icon="heroicons:speaker-wave" class="text-xl"></iconify-icon>
+                      </button>
+                      <div id="video-volume-panel" class="absolute bottom-full left-0 mb-1 px-3 py-2 bg-black/90 rounded-lg shadow-lg hidden flex items-center gap-2">
+                        <div class="video-volume-wrap">
+                          <div id="video-volume-fill" class="video-volume-fill" style="width: 100%"></div>
+                          <input type="range" id="video-volume" min="0" max="100" value="100" title="音量" aria-label="音量" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="relative">
+                      <button type="button" id="video-settings-btn" class="p-1.5 rounded hover:bg-white/20 transition-colors" title="设置" aria-label="设置">
+                        <iconify-icon icon="heroicons:cog-6-tooth" class="text-xl"></iconify-icon>
+                      </button>
+                      <div id="video-settings-menu" class="absolute bottom-full right-0 mb-1 py-1 bg-black/90 rounded-lg shadow-lg text-sm min-w-[110px] hidden">
+                        <div id="video-settings-main" class="py-0.5">
+                          <button type="button" id="video-settings-speed-entry" class="flex items-center justify-between w-full text-left px-3 py-2 hover:bg-white/20 text-white/90">
+                            <span>播放速度</span>
+                            <iconify-icon icon="heroicons:chevron-right" class="text-base opacity-70"></iconify-icon>
+                          </button>
+                          <button type="button" id="video-settings-quality-entry" class="flex items-center justify-between w-full text-left px-3 py-2 hover:bg-white/20 text-white/90">
+                            <span>清晰度</span>
+                            <iconify-icon icon="heroicons:chevron-right" class="text-base opacity-70"></iconify-icon>
+                          </button>
+                        </div>
+                        <div id="video-settings-speed-panel" class="hidden py-0.5">
+                          <button type="button" id="video-settings-speed-back" class="flex items-center w-full text-left px-3 py-2 hover:bg-white/20 text-white/80 text-xs">
+                            <iconify-icon icon="heroicons:chevron-left" class="text-base mr-1"></iconify-icon>
+                            返回
+                          </button>
+                          <button type="button" class="video-speed-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-speed="0.5">0.5x</button>
+                          <button type="button" class="video-speed-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-speed="0.75">0.75x</button>
+                          <button type="button" class="video-speed-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-speed="1">1x</button>
+                          <button type="button" class="video-speed-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-speed="1.25">1.25x</button>
+                          <button type="button" class="video-speed-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-speed="1.5">1.5x</button>
+                          <button type="button" class="video-speed-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-speed="2">2x</button>
+                        </div>
+                        <div id="video-settings-quality-panel" class="hidden py-0.5">
+                          <button type="button" id="video-settings-quality-back" class="flex items-center w-full text-left px-3 py-2 hover:bg-white/20 text-white/80 text-xs">
+                            <iconify-icon icon="heroicons:chevron-left" class="text-base mr-1"></iconify-icon>
+                            返回
+                          </button>
+                          <p class="px-3 py-1.5 text-white/50 text-xs">当前视频仅有一种画质</p>
+                          <button type="button" class="video-quality-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-quality="auto">自动</button>
+                          <button type="button" class="video-quality-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-quality="流畅">流畅</button>
+                          <button type="button" class="video-quality-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-quality="标清">标清</button>
+                          <button type="button" class="video-quality-option block w-full text-left px-3 py-2 hover:bg-white/20 text-white/90" data-quality="高清">高清</button>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" id="video-fullscreen-btn" class="p-1.5 rounded hover:bg-white/20 transition-colors" title="全屏" aria-label="全屏">
+                      <iconify-icon icon="heroicons:arrows-pointing-out" class="text-xl"></iconify-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-1 text-sm">
+              <p
+                id="course-video-current-title"
+                class="font-medium text-gray-900"
+              >
+                暂未选择视频
+              </p>
+              <p
+                id="course-video-current-meta"
+                class="text-xs text-gray-500"
+              >
+              </p>
+              <p
+                id="course-video-current-desc"
+                class="text-xs text-gray-600 mt-1 leading-relaxed"
+              >
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/member-course-videos.js"></script>
+  </body>
+</html>

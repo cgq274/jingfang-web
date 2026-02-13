@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 首页</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body>
+    <style type="text/tailwindcss" id="global-styles-root">
+      @layer base {
+        :root {
+          --primary: #1e40af;
+          --secondary: #0ea5e9;
+          --accent: #8b5cf6;
+          --success: #10b981;
+          --warning: #f59e0b;
+          --danger: #ef4444;
+        }
+        
+        body {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+      }
+      
+      @layer utilities {
+        .glass-effect {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .text-gradient {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        
+        .shadow-soft {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .shadow-hard {
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .hover-lift {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        
+        .animate-pulse-slow {
+          animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+      }
+    </style>
+
+    <header id="main-header-root" class="sticky top-0 z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-soft">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex flex-wrap items-center justify-between">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3 order-1">
+            <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
+              <iconify-icon icon="ph:graduation-cap-fill" class="text-2xl text-white"></iconify-icon>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">敬方教育</h1>
+              <p class="text-sm text-gray-600">金融培训专家</p>
+            </div>
+          </div>
+          
+          <!-- 导航菜单 -->
+          <nav id="main-nav" class="hidden md:flex flex-col md:flex-row items-center w-full md:w-auto order-3 md:order-2 space-y-2 md:space-y-0 md:space-x-8 mt-4 md:mt-0">
+            <a href="#home" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">首页</a>
+            <a href="courses.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">课程</a>
+            <a href="#instructors" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">导师</a>
+            <a href="#pricing" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">会员</a>
+            <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">关于</a>
+          </nav>
+          
+          <!-- 登录按钮 / 已登录状态 -->
+          <div class="flex items-center space-x-4 order-2">
+            <div id="auth-header-container">
+              <button id="login-btn" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg">
+                登录 / 注册
+              </button>
+            </div>
+            <button id="mobile-menu-btn" type="button" class="md:hidden" aria-label="打开菜单">
+              <iconify-icon icon="heroicons:bars-3" class="text-2xl text-gray-700"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+ 
+    <section id="home" class="relative overflow-hidden gradient-bg text-white py-20 md:py-32">
+      <!-- 背景装饰 -->
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 left-10 w-72 h-72 rounded-full bg-white animate-float"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-white animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/3 w-64 h-64 rounded-full bg-white animate-float" style="animation-delay: 4s;"></div>
+      </div>
+      
+      <div class="container mx-auto px-6 relative z-10">
+        <div id="home-announcement-wrapper" class="max-w-4xl mx-auto text-center mb-4">
+          <p id="home-announcement-bar" class="hidden inline-block px-4 py-2 bg-white/10 rounded-full text-sm text-blue-100 border border-white/20">
+            <!-- 公告内容通过 index-settings.js 动态填充 -->
+          </p>
+        </div>
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            专业的<span class="text-yellow-300">金融教育</span>平台
+          </h1>
+          <p class="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl mx-auto">
+            为金融从业者、投资者和学生提供最专业的培训课程，从基础到高级，全面提升您的金融知识与实战能力
+          </p>
+          
+          <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+            <button id="free-course-btn" type="button" class="px-8 py-4 bg-white text-blue-700 font-bold rounded-full text-lg hover:bg-blue-50 transition-all duration-300 shadow-hard hover-lift">
+              立即体验免费课程
+            </button>
+            <button class="px-8 py-4 border-2 border-white text-white font-bold rounded-full text-lg hover:bg-white/10 transition-all duration-300 hover-lift">
+              观看介绍视频
+            </button>
+          </div>
+          
+          <!-- 统计数据（占位，待后续补充） -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20">
+            <div class="text-center">
+              <div class="text-4xl font-bold mb-2">&nbsp;</div>
+              <div class="text-blue-200">&nbsp;</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold mb-2">&nbsp;</div>
+              <div class="text-blue-200">&nbsp;</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold mb-2">&nbsp;</div>
+              <div class="text-blue-200">&nbsp;</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold mb-2">&nbsp;</div>
+              <div class="text-blue-200">&nbsp;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <section id="courses" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">热门金融课程</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">从基础理论到实战技巧，我们提供全方位的金融知识培训</p>
+        </div>
+        
+        <div id="index-courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 课程卡片将通过 index-courses.js 动态加载 -->
+        </div>
+        
+        <div class="text-center mt-12">
+          <a href="courses.html" class="inline-block px-8 py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">
+            查看全部课程
+          </a>
+        </div>
+      </div>
+    </section>
+ 
+    <section id="instructors" class="py-20">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">资深金融导师</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">我们的导师团队由金融行业资深专家组成，拥有丰富的实战经验</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- 导师卡片 1 -->
+          <div class="text-center group">
+            <div class="relative mb-6">
+              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
+                <img src="https://picsum.photos/400/400?random=4" alt="张教授" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                投资专家
+              </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">张明教授</h3>
+            <p class="text-gray-600 mb-4">前高盛投资总监，20年投资经验</p>
+            <div class="flex justify-center space-x-3">
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 导师卡片 2 -->
+          <div class="text-center group">
+            <div class="relative mb-6">
+              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
+                <img src="https://picsum.photos/400/400?random=5" alt="李博士" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                风控专家
+              </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">李华博士</h3>
+            <p class="text-gray-600 mb-4">风险管理专家，15年银行风控经验</p>
+            <div class="flex justify-center space-x-3">
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 导师卡片 3 -->
+          <div class="text-center group">
+            <div class="relative mb-6">
+              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
+                <img src="https://picsum.photos/400/400?random=6" alt="王总监" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                金融科技
+              </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">王强总监</h3>
+            <p class="text-gray-600 mb-4">金融科技公司CTO，区块链专家</p>
+            <div class="flex justify-center space-x-3">
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 导师卡片 4 -->
+          <div class="text-center group">
+            <div class="relative mb-6">
+              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
+                <img src="https://picsum.photos/400/400?random=7" alt="赵分析师" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                证券分析
+              </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">赵敏分析师</h3>
+            <p class="text-gray-600 mb-4">证券研究所首席分析师，12年从业经验</p>
+            <div class="flex justify-center space-x-3">
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-blue-600">
+                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 登录弹窗：点击导航「登录/注册」时显示，不占用首页版面 -->
+    <div id="login-modal-backdrop" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm" aria-hidden="true">
+      <div id="login-modal" class="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <div class="bg-white rounded-2xl shadow-hard p-8 relative">
+          <button type="button" id="login-modal-close" class="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" aria-label="关闭">
+            <iconify-icon icon="heroicons:x-mark" class="text-2xl"></iconify-icon>
+          </button>
+          <div class="text-center mb-8">
+            <div class="w-16 h-16 rounded-full gradient-bg flex items-center justify-center mx-auto mb-4">
+              <iconify-icon icon="ph:graduation-cap-fill" class="text-3xl text-white"></iconify-icon>
+            </div>
+            <h2 id="login-modal-title" class="text-2xl font-bold text-gray-900">登录敬方教育</h2>
+            <p class="text-gray-600 mt-2">请输入您的账号信息</p>
+          </div>
+          
+          <form id="login-form" class="space-y-6">
+            <div>
+              <label for="username" class="block text-sm font-medium text-gray-700 mb-2">用户名 / 邮箱</label>
+              <input type="text" id="username" name="username" required="" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" placeholder="请输入用户名或邮箱">
+            </div>
+            
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-2">密码</label>
+              <input type="password" id="password" name="password" required="" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" placeholder="请输入密码">
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-blue-600 rounded">
+                <label for="remember" class="ml-2 text-sm text-gray-600">记住我</label>
+              </div>
+              <a href="forget-password.html" class="text-sm text-blue-600 hover:text-blue-800">忘记密码？</a>
+            </div>
+            
+            <button type="submit" id="submit-login" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg">
+              登录
+            </button>
+            
+            <div class="text-center pt-4 border-t border-gray-200">
+              <p class="text-gray-600">
+                还没有账号？
+                <a href="register.html" class="text-blue-600 font-medium hover:text-blue-800">立即注册</a>
+              </p>
+            </div>
+          </form>
+          
+          <div id="login-message" class="mt-4 hidden">
+            <div id="login-message-inner" class="p-4 rounded-lg bg-blue-50 border border-blue-200">
+              <div class="flex items-center">
+                <iconify-icon icon="heroicons:information-circle" class="text-blue-600 text-xl mr-2"></iconify-icon>
+                <p id="message-text" class="text-blue-800"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="pricing" class="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">会员方案选择</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">选择适合您的会员方案，开启专业金融学习之旅</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <!-- 普通会员 -->
+          <div class="bg-white rounded-2xl p-8 shadow-soft hover-lift border border-gray-200">
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-bold text-gray-900 mb-4">普通会员</h3>
+              <div class="text-5xl font-bold text-gray-900 mb-2">¥299<span class="text-lg text-gray-500">/月</span></div>
+              <p class="text-gray-600">基础学习功能</p>
+            </div>
+            
+            <ul class="space-y-4 mb-8">
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>访问所有基础课程</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>每周直播课程</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>课程资料下载</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>社区交流</span>
+              </li>
+              <li class="flex items-center text-gray-400">
+                <iconify-icon icon="heroicons:x-circle" class="mr-3"></iconify-icon>
+                <span>1v1导师辅导</span>
+              </li>
+              <li class="flex items-center text-gray-400">
+                <iconify-icon icon="heroicons:x-circle" class="mr-3"></iconify-icon>
+                <span>个性化作业布置</span>
+              </li>
+            </ul>
+            
+            <button class="w-full py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">
+              选择此方案
+            </button>
+          </div>
+          
+          <!-- VIP会员 -->
+          <div class="bg-gradient-to-b from-blue-600 to-indigo-700 rounded-2xl p-8 shadow-hard hover-lift relative transform scale-105">
+            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <span class="px-4 py-2 bg-yellow-500 text-white font-bold rounded-full">推荐</span>
+            </div>
+            
+            <div class="text-center mb-8 text-white">
+              <h3 class="text-2xl font-bold mb-4">VIP会员</h3>
+              <div class="text-5xl font-bold mb-2">¥899<span class="text-lg text-blue-200">/月</span></div>
+              <p class="text-blue-200">尊享专属服务</p>
+            </div>
+            
+            <ul class="space-y-4 mb-8 text-white">
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
+                <span>包含普通会员所有权益</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
+                <span>每周1v1导师辅导</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
+                <span>个性化作业布置与批改</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
+                <span>职业规划指导</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
+                <span>专属学习计划</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
+                <span>优先参加线下活动</span>
+              </li>
+            </ul>
+            
+            <button class="w-full py-3 bg-white text-blue-600 font-bold rounded-full hover:bg-blue-50 transition-all duration-300">
+              选择此方案
+            </button>
+          </div>
+          
+          <!-- 企业方案 -->
+          <div class="bg-white rounded-2xl p-8 shadow-soft hover-lift border border-gray-200">
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-bold text-gray-900 mb-4">企业方案</h3>
+              <div class="text-5xl font-bold text-gray-900 mb-2">定制</div>
+              <p class="text-gray-600">团队培训解决方案</p>
+            </div>
+            
+            <ul class="space-y-4 mb-8">
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>团队账户管理</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>定制化课程内容</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>企业内训服务</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>培训效果评估</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>专属客户经理</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
+                <span>API集成支持</span>
+              </li>
+            </ul>
+            
+            <button class="w-full py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">
+              联系销售
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">关于敬方教育</h2>
+          <p class="text-xl text-gray-600 mb-8">敬方教育成立于2015年，致力于为金融从业者、投资者和学生提供最专业的培训服务。我们拥有资深导师团队和完善的课程体系，已帮助数万名学员提升金融素养与实战能力。</p>
+          <div class="flex flex-wrap justify-center gap-8 text-gray-600">
+            <div class="flex items-center">
+              <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-blue-600 mr-2"></iconify-icon>
+              <span>专业资质认证</span>
+            </div>
+            <div class="flex items-center">
+              <iconify-icon icon="heroicons:user-group" class="text-2xl text-blue-600 mr-2"></iconify-icon>
+              <span>10万+ 学员信赖</span>
+            </div>
+            <div class="flex items-center">
+              <iconify-icon icon="heroicons:building-office-2" class="text-2xl text-blue-600 mr-2"></iconify-icon>
+              <span>与 50+ 机构合作</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="main-footer-root" class="bg-gray-900 text-white py-12">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- 公司信息（名称、副标题、简介由系统设置更新） -->
+          <div>
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
+                <iconify-icon icon="ph:graduation-cap-fill" class="text-xl text-white"></iconify-icon>
+              </div>
+              <div>
+                <h3 id="footer-site-name" class="text-xl font-bold">敬方教育</h3>
+                <p id="footer-slogan" class="text-sm text-gray-400">金融培训专家</p>
+              </div>
+            </div>
+            <p id="footer-intro" class="text-gray-400 mb-6">致力于提供最专业的金融教育培训，帮助学员在金融领域取得成功。</p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-white">
+                <iconify-icon icon="mdi:wechat" class="text-2xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-white">
+                <iconify-icon icon="mdi:linkedin" class="text-2xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-white">
+                <iconify-icon icon="mdi:twitter" class="text-2xl"></iconify-icon>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-white">
+                <iconify-icon icon="mdi:youtube" class="text-2xl"></iconify-icon>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 快速链接 -->
+          <div>
+            <h4 class="text-lg font-bold mb-6">快速链接</h4>
+            <ul class="space-y-3">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">首页</a></li>
+              <li><a href="courses.html" class="text-gray-400 hover:text-white transition-colors duration-200">课程中心</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">导师团队</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">会员方案</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">关于我们</a></li>
+            </ul>
+          </div>
+          
+          <!-- 服务支持 -->
+          <div>
+            <h4 class="text-lg font-bold mb-6">服务支持</h4>
+            <ul class="space-y-3">
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">帮助中心</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">常见问题</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">联系我们</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">隐私政策</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">用户协议</a></li>
+            </ul>
+          </div>
+          
+          <!-- 联系方式 -->
+          <div>
+            <h4 class="text-lg font-bold mb-6">联系我们</h4>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <iconify-icon icon="heroicons:map-pin" class="text-gray-400 mr-3 mt-1"></iconify-icon>
+                <span class="text-gray-400">上海市浦东新区金融中心大厦18楼</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:phone" class="text-gray-400 mr-3"></iconify-icon>
+                <span id="footer-phone" class="text-gray-400">400-123-4567</span>
+              </li>
+              <li class="flex items-center">
+                <iconify-icon icon="heroicons:envelope" class="text-gray-400 mr-3"></iconify-icon>
+                <span id="footer-email" class="text-gray-400">contact@jingfang.com</span>
+              </li>
+            </ul>
+            
+            <!-- 订阅框 -->
+            <div class="mt-8">
+              <p class="text-gray-400 mb-3">订阅我们的新闻通讯</p>
+              <div class="flex">
+                <input type="email" placeholder="您的邮箱" class="flex-1 px-4 py-2 rounded-l-lg bg-gray-800 text-white border-0 focus:ring-2 focus:ring-blue-500">
+                <button class="px-4 py-2 bg-blue-600 rounded-r-lg hover:bg-blue-700 transition-colors duration-200">
+                  <iconify-icon icon="heroicons:paper-airplane"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+          <p id="footer-copyright">© 2025 敬方教育. 保留所有权利.</p>
+          <p id="footer-icp" class="mt-2 text-sm hidden"></p>
+        </div>
+      </div>
+    </footer>
+ 
+    <script id="main-script-root">(function() { 
+      document.addEventListener('DOMContentLoaded', function() {
+        // 登录按钮与表单由 js/index-auth.js 处理（调用后端 API）
+        
+        // 移动端菜单展开/收起
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        if (mobileMenuBtn && mainNav) {
+          mobileMenuBtn.addEventListener('click', function() {
+            mainNav.classList.toggle('hidden');
+            mainNav.classList.toggle('flex');
+          });
+        }
+        
+        // 登录表单与后端 API 由 js/index-auth.js 处理
+        
+        // 导航栏滚动效果
+        const header = document.getElementById('main-header-root');
+        let lastScrollTop = 0;
+        
+        window.addEventListener('scroll', function() {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          
+          if (scrollTop > 100) {
+            header.classList.add('shadow-md', 'py-3');
+            header.classList.remove('py-4');
+          } else {
+            header.classList.remove('shadow-md', 'py-3');
+            header.classList.add('py-4');
+          }
+          
+          lastScrollTop = scrollTop;
+        });
+        
+        // 卡片悬停效果增强
+        const hoverLiftCards = document.querySelectorAll('.hover-lift');
+        hoverLiftCards.forEach(card => {
+          card.addEventListener('mouseenter', function() {
+            this.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+          });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              // 移动端点击后收起菜单
+              if (mainNav && mainNav.classList.contains('flex') && window.innerWidth < 768) {
+                mainNav.classList.add('hidden');
+                mainNav.classList.remove('flex');
+              }
+              window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+        
+        // 初始化工具提示
+        const tooltips = document.querySelectorAll('[data-tooltip]');
+        tooltips.forEach(element => {
+          element.addEventListener('mouseenter', function() {
+            const tooltipText = this.getAttribute('data-tooltip');
+            const tooltip = document.createElement('div');
+            tooltip.className = 'absolute z-50 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg';
+            tooltip.textContent = tooltipText;
+            tooltip.id = 'dynamic-tooltip';
+            document.body.appendChild(tooltip);
+            tooltip.style.top = (this.getBoundingClientRect().top + window.scrollY - 40) + 'px';
+            tooltip.style.left = (this.getBoundingClientRect().left + this.offsetWidth/2 - tooltip.offsetWidth/2) + 'px';
+          });
+          
+          element.addEventListener('mouseleave', function() {
+            const tooltip = document.getElementById('dynamic-tooltip');
+            if (tooltip) {
+              tooltip.remove();
+            }
+          });
+        });
+      });
+    })();</script>
+    <script type="module" src="js/index-auth.js"></script>
+    <script type="module" src="js/index-settings.js"></script>
+    <script type="module" src="js/index-courses.js"></script>
+ 
+ </body></html>
