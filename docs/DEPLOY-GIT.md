@@ -136,7 +136,7 @@ pm2 save
 pm2 startup
 ```
 
-按 [DEPLOY-CLI.md](DEPLOY-CLI.md) 配置 Nginx 反向代理和 HTTPS 即可。
+按 [DEPLOY-CLI.md](DEPLOY-CLI.md) 配置 Nginx 反向代理和 HTTPS（推荐 acme.sh + 腾讯云 DNS API，国内/未备案适用）。
 
 ---
 

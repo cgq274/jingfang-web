@@ -6,7 +6,7 @@
 
 - **Git 方案（推荐）**：先推送到 GitHub/Gitee，服务器 `git clone`，后续 `git pull` 更新。见 [docs/DEPLOY-GIT.md](docs/DEPLOY-GIT.md)。
 - **命令行部署（不依赖 1Panel）**：见 [docs/DEPLOY-CLI.md](docs/DEPLOY-CLI.md)  
-  适合：从本机把网站部署到自己的 Linux 服务器（Nginx + PM2 + Let's Encrypt）。
+  适合：从本机把网站部署到自己的 Linux 服务器（Nginx + PM2 + HTTPS：acme.sh + 腾讯云 DNS 或 certbot）。
 - **从本机重新部署/更新**：见 [docs/DEPLOY-LOCAL.md](docs/DEPLOY-LOCAL.md)  
   适合：服务器环境已按 CLI 文档配好，只需上传新代码并重启。
 - 1Panel 部署：见 [docs/DEPLOY-1PANEL.md](docs/DEPLOY-1PANEL.md)（如不使用 1Panel 可忽略）。

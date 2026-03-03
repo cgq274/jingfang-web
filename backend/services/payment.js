@@ -162,13 +162,23 @@ async function createAlipayPagePay(order, subject) {
 }
 
 /**
- * 支付宝异步通知验签并确认订单，成功后返回 "SUCCESS"
+ * 支付宝异步通知验签并确认订单，成功后返回 "success"（必须原样，支付宝据此判断是否重试）
  */
 async function handleAlipayNotify(postData, res) {
-  if (!alipayConfig.enabled || !alipayConfig.alipayPublicKey) {
+  const log = (msg, extra) => console.log("[支付宝异步通知]", msg, extra ? JSON.stringify(extra) : "");
+
+  if (!postData || typeof postData !== "object") {
+    log("收到空 body，请确认 Nginx/代理未丢弃 application/x-www-form-urlencoded 的 body");
     res.send("fail");
     return;
   }
+
+  if (!alipayConfig.enabled || !alipayConfig.alipayPublicKey) {
+    log("未启用或缺少支付宝公钥，无法验签");
+    res.send("fail");
+    return;
+  }
+
   const { AlipaySdk } = require("alipay-sdk");
   const alipaySdk = new AlipaySdk({
     appId: alipayConfig.appId,
@@ -177,28 +187,40 @@ async function handleAlipayNotify(postData, res) {
     gateway: alipayConfig.gateway,
     keyType: "PKCS8",
   });
+
   try {
     const verified = alipaySdk.checkNotifySignV2 ? alipaySdk.checkNotifySignV2(postData) : alipaySdk.checkNotifySign(postData);
     if (!verified) {
+      log("验签失败，请确认使用沙箱公钥且与沙箱应用匹配", { out_trade_no: postData.out_trade_no });
       res.send("fail");
       return;
     }
+
     const tradeStatus = postData.trade_status;
     if (tradeStatus !== "TRADE_SUCCESS" && tradeStatus !== "TRADE_FINISHED") {
+      log("非成功状态，已忽略", { trade_status: tradeStatus });
       res.send("success");
       return;
     }
-    const outTradeNo = postData.out_trade_no || "";
-    const tradeNo = postData.trade_no || "";
+
+    const outTradeNo = (postData.out_trade_no || "").trim();
+    const tradeNo = (postData.trade_no || "").trim();
     const orderId = outTradeNo.startsWith("ORD") ? parseInt(outTradeNo.slice(3), 10) : parseInt(outTradeNo, 10);
-    if (!orderId) {
+    if (!orderId || isNaN(orderId)) {
+      log("无法解析商户订单号", { out_trade_no: outTradeNo });
       res.send("success");
       return;
     }
-    await confirmOrderPaid(orderId, "alipay", tradeNo);
+
+    const result = await confirmOrderPaid(orderId, "alipay", tradeNo);
+    if (result.ok) {
+      log("订单已更新为已支付", { orderId, courseId: result.courseId });
+    } else {
+      log("订单已支付或状态不允许", { orderId, message: result.message });
+    }
     res.send("success");
   } catch (err) {
-    console.error("支付宝回调处理失败:", err);
+    console.error("[支付宝异步通知] 处理异常:", err.message, err.stack);
     res.send("fail");
   }
 }

@@ -126,6 +126,13 @@
         color: #2563eb;
         border-left-color: #2563eb;
       }
+      /* 手机端：子菜单始终显示，便于点击 */
+      @media (max-width: 767px) {
+        #nav-videos-wrap .nav-videos-sub,
+        #nav-courses-wrap .nav-course-create-option {
+          display: flex !important;
+        }
+      }
 
       /* 根布局：约束视口，避免内容溢出 */
       html, body {
@@ -204,6 +211,27 @@
       }
       @media (max-width: 767px) {
         #admin-main-wrap { margin-left: 0 !important; }
+      }
+      /* 手机端：侧边栏遮罩，打开侧栏时显示 */
+      #admin-sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 35;
+        transition: opacity 0.25s ease;
+      }
+      #admin-layout-root.mobile-sidebar-open #admin-sidebar-overlay {
+        display: block;
+      }
+      @media (min-width: 768px) {
+        #admin-sidebar-overlay { display: none !important; }
+      }
+      /* 手机端打开侧栏时显示侧边栏（覆盖 -translate-x-full） */
+      @media (max-width: 767px) {
+        #admin-layout-root.mobile-sidebar-open #admin-sidebar {
+          transform: translateX(0);
+        }
       }
       #admin-main-content {
         flex: 1;
@@ -284,6 +312,9 @@
         </div>
       </div>
       
+      <!-- 手机端侧边栏遮罩（点击关闭侧栏） -->
+      <div id="admin-sidebar-overlay" aria-hidden="true"></div>
+      
       <!-- 侧边栏收起/展开按钮 -->
       <button id="sidebar-toggle-btn" type="button" title="收起侧边栏" aria-label="收起侧边栏">
         <iconify-icon id="sidebar-toggle-icon" icon="heroicons:chevron-left" class="text-lg"></iconify-icon>
@@ -293,14 +324,20 @@
       <div id="admin-main-wrap" class="ml-64">
         <!-- 顶部导航 -->
         <header class="flex-shrink-0 sticky top-0 z-30 bg-white border-b shadow-sm">
-          <div class="px-8 py-4">
+          <div class="px-4 sm:px-8 py-4">
             <div class="flex items-center justify-between">
-              <div>
-                <h1 id="section-title" class="text-2xl font-bold text-gray-900">控制面板</h1>
-                <p id="section-subtitle" class="text-gray-600">查看平台关键数据总览</p>
+              <div class="flex items-center gap-3 min-w-0">
+                <!-- 手机端：汉堡菜单按钮，打开侧边栏 -->
+                <button id="admin-mobile-menu-btn" type="button" class="md:hidden flex-shrink-0 p-2 text-gray-600 hover:text-blue-500 hover:bg-gray-100 rounded-lg transition-colors" title="打开菜单" aria-label="打开菜单">
+                  <iconify-icon icon="heroicons:bars-3" class="text-xl"></iconify-icon>
+                </button>
+                <div class="min-w-0">
+                  <h1 id="section-title" class="text-xl sm:text-2xl font-bold text-gray-900 truncate">控制面板</h1>
+                  <p id="section-subtitle" class="text-gray-600 text-sm sm:text-base truncate">查看平台关键数据总览</p>
+                </div>
               </div>
               
-              <div class="flex items-center space-x-4">
+              <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
                 <button id="fullscreen-toggle" type="button" class="p-2 text-gray-600 hover:text-blue-500 hover:bg-gray-100 rounded-lg transition-colors" title="全屏/退出全屏">
                   <iconify-icon id="fullscreen-icon" icon="heroicons:arrows-pointing-out" class="text-xl"></iconify-icon>
                 </button>
@@ -879,10 +916,24 @@
           });
         }
         
-        // 侧边栏响应式（小屏隐藏侧边栏和收起按钮）
+        // 手机端侧栏：打开/关闭（汉堡按钮 + 遮罩）
+        const layoutRoot = document.getElementById('admin-layout-root');
+        const sidebarOverlay = document.getElementById('admin-sidebar-overlay');
+        const mobileMenuBtn = document.getElementById('admin-mobile-menu-btn');
+        function openMobileSidebar() {
+          if (layoutRoot) layoutRoot.classList.add('mobile-sidebar-open');
+        }
+        function closeMobileSidebar() {
+          if (layoutRoot) layoutRoot.classList.remove('mobile-sidebar-open');
+        }
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileSidebar);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+        // 侧边栏响应式（小屏隐藏侧边栏和收起按钮，并关闭手机端侧栏状态）
         function checkScreenSize() {
           if (!sidebar || !mainContent) return;
           if (window.innerWidth < 768) {
+            closeMobileSidebar();
             sidebar.classList.add('-translate-x-full');
             if (sidebarToggleBtn) sidebarToggleBtn.style.display = 'none';
           } else {
@@ -931,6 +982,7 @@
         };
 
         function switchSection(targetKey) {
+          closeMobileSidebar(); // 手机端：切换模块时关闭侧栏
           // 切换可见模块（直接控制 display，避免部分样式类覆盖 hidden）
           sections.forEach((sec) => {
             if (sec.id === `section-${targetKey}`) {

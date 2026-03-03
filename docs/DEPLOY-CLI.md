@@ -110,9 +110,10 @@ cd /var/www/jingfang-web
 
 ### 安装依赖（两种方式完成后都在服务器执行）
 
-在服务器上进入后端目录并安装 npm 依赖：
+若项目是用 `sudo git clone` 拉取的，建议先把目录属主改为当前用户（如 ubuntu），再安装依赖，避免 EACCES：
 
 ```bash
+sudo chown -R $USER:$USER /var/www/jingfang-web
 cd /var/www/jingfang-web/backend
 npm install
 cd ..
@@ -144,6 +145,8 @@ PAYMENT_BASE_URL=https://你的域名.com
 
 ## 第五步：启动 Node 应用
 
+若服务器上曾用 1Panel 部署过经方，先停掉占用 3000 端口的 1Panel Node 进程（`sudo ss -tlnp | grep 3000` 查 pid，`sudo kill <pid>` 或到 1Panel 里停用），否则 PM2 的 jingfang 无法绑定 3000。
+
 ```bash
 cd /var/www/jingfang-web
 pm2 start backend/app.js --name jingfang
@@ -165,25 +168,41 @@ curl http://127.0.0.1:3000/api/ping
 
 ## 第六步：配置 Nginx 反向代理
 
-### 创建站点配置
+**这一步在做什么**：让外网访问你域名的 80 端口时，由 Nginx 把请求转给本机 3000 端口的 Node 应用，用户只看到域名，不看到端口。
 
-**Ubuntu / Debian**（/etc/nginx/sites-available/）：
+---
+
+### 1. 确定你要用的域名
+
+例如：`jingfangfinance.cn`。下面用「你的域名」代替，你全部替换成自己的域名即可。
+
+---
+
+### 2. 新建一个 Nginx 站点配置文件
+
+**如果是 Ubuntu / Debian**，在服务器上执行：
 
 ```bash
 sudo nano /etc/nginx/sites-available/jingfang
 ```
 
-**CentOS / RHEL**（/etc/nginx/conf.d/）：
+**如果是 CentOS / RHEL**，执行：
 
 ```bash
 sudo nano /etc/nginx/conf.d/jingfang.conf
 ```
 
-写入以下内容（把 `你的域名.com` 改成实际域名）：
+会打开一个空文件（或新建文件），进入编辑模式。
+
+---
+
+### 3. 把下面整段复制进去，并改掉「你的域名」
+
+把下面**整段**复制到刚才打开的文件里，把**两处** `你的域名.com` 都改成你的真实域名（例如 `jingfangfinance.cn`），**不要**保留「你的域名.com」这几个字。`listen 80 default_server` 表示 80 端口的默认站点用此配置，避免被系统自带的 default 站点抢走请求。
 
 ```nginx
 server {
-    listen 80;
+    listen 80 default_server;
     server_name 你的域名.com www.你的域名.com;
 
     location / {
@@ -197,41 +216,144 @@ server {
 }
 ```
 
-### 启用站点（仅 Ubuntu/Debian 有 sites-enabled）
+**示例**：若域名是 `jingfangfinance.cn`，则 `server_name` 那一行写成：
+
+```nginx
+    server_name jingfangfinance.cn www.jingfangfinance.cn;
+```
+
+其他行不用改。保存退出：
+- **nano**：按 `Ctrl+O` 回车保存，再按 `Ctrl+X` 退出。
+
+---
+
+### 4. 启用站点（仅 Ubuntu/Debian 需要）
+
+**只有 Ubuntu/Debian** 需要执行下面这一行；CentOS 跳过。
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/jingfang /etc/nginx/sites-enabled/
 ```
 
-### 测试并重载 Nginx
+---
+
+### 5. 检查配置并让 Nginx 重新加载
+
+```bash
+sudo nginx -t
+```
+
+若显示 `syntax is ok` 和 `test is successful`，再执行：
+
+```bash
+sudo systemctl reload nginx
+```
+
+**Ubuntu/Debian**：若之前有默认站点，先删掉再重载，否则可能 404：
+
+```bash
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+到此，访问 `http://你的域名` 应能打开你的网站（若 80 端口已在防火墙/安全组放行）。
+
+---
+
+## 第七步：配置 HTTPS（SSL 证书）
+
+若服务器在**国内**且域名**未备案**，用 certbot 的 HTTP 验证常会失败（被运营商拦截）。推荐用 **acme.sh + 腾讯云 DNS API** 做 DNS 验证，自动申请并续期 Let's Encrypt 证书。
+
+### 方式 A：acme.sh + 腾讯云 DNS API（推荐，国内/未备案适用）
+
+**1. 安装 acme.sh**（用 ubuntu 用户，不要 sudo）
+
+```bash
+curl https://get.acme.sh | sh -s email=你的邮箱@example.com
+source ~/.bashrc
+```
+
+**2. 在腾讯云获取 API 密钥**
+
+登录 [腾讯云 - API 密钥管理](https://console.cloud.tencent.com/cam/capi)，新建或使用已有的 **SecretId**、**SecretKey**。
+
+**3. 使用 Let's Encrypt 并申请证书**（变量名必须是 `Tencent_SecretId` / `Tencent_SecretKey`）
+
+```bash
+~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+
+export Tencent_SecretId="你的SecretId"
+export Tencent_SecretKey="你的SecretKey"
+~/.acme.sh/acme.sh --issue --dns dns_tencent -d 你的域名.com -d www.你的域名.com
+```
+
+**4. 安装证书到本机目录（不要用 sudo 跑 acme.sh）**
+
+```bash
+mkdir -p /home/ubuntu/nginx-ssl
+~/.acme.sh/acme.sh --install-cert -d 你的域名.com --ecc \
+  --key-file /home/ubuntu/nginx-ssl/你的域名.com.key \
+  --fullchain-file /home/ubuntu/nginx-ssl/你的域名.com.pem \
+  --reloadcmd "sudo cp /home/ubuntu/nginx-ssl/你的域名.com.key /home/ubuntu/nginx-ssl/你的域名.com.pem /etc/nginx/ssl/ && sudo systemctl reload nginx"
+```
+
+**5. 复制证书到 Nginx 目录**
+
+```bash
+sudo mkdir -p /etc/nginx/ssl
+sudo cp /home/ubuntu/nginx-ssl/你的域名.com.key /home/ubuntu/nginx-ssl/你的域名.com.pem /etc/nginx/ssl/
+```
+
+**6. 修改 Nginx 配置，增加 443 和证书**
+
+编辑经方站点配置（Ubuntu：`/etc/nginx/sites-available/jingfang`），在原有 `server { ... }` 里增加 `listen 443 ssl` 和证书路径，例如：
+
+```nginx
+server {
+    listen 80 default_server;
+    listen 443 ssl default_server;
+    server_name 你的域名.com www.你的域名.com;
+
+    ssl_certificate     /etc/nginx/ssl/你的域名.com.pem;
+    ssl_certificate_key /etc/nginx/ssl/你的域名.com.key;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+把 `你的域名.com` 换成实际域名（如 `jingfangfinance.cn`）。保存后执行：
 
 ```bash
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
+**7. 云安全组放行 443**
+
+在云控制台为实例的安全组**入方向**添加：端口 **443**，来源 **0.0.0.0/0**，协议 TCP。
+
+完成后访问 `https://你的域名.com` 即可。
+
 ---
 
-## 第七步：配置 HTTPS（Let's Encrypt）
+### 方式 B：certbot（仅当域名已备案或服务器在海外时可用）
+
+若 80 端口可从公网正常访问（无未备案拦截），可用 certbot：
 
 ```bash
 # Ubuntu / Debian
 sudo apt install -y certbot python3-certbot-nginx
-
-# CentOS 7
-sudo yum install -y certbot python3-certbot-nginx
-
-# CentOS 8+
-sudo dnf install -y certbot python3-certbot-nginx
-```
-
-申请证书：
-
-```bash
 sudo certbot --nginx -d 你的域名.com -d www.你的域名.com
 ```
 
-按提示填写邮箱、同意条款。完成后会自动配置 HTTPS 并设置续期。
+按提示填写邮箱、同意条款。完成后 certbot 会自动为 Nginx 配置 HTTPS 并设置续期。
 
 ---
 
@@ -341,12 +463,33 @@ chmod +x /var/www/jingfang-web/deploy.sh
 - 检查 PM2：`pm2 status`、`pm2 logs jingfang`
 - 检查端口：`ss -tlnp | grep 3000` 或 `netstat -tlnp | grep 3000`
 
+### 访问 http 返回 404，且错误里出现 /opt/1panel/... 路径
+
+说明 3000 端口被 **1Panel 的 Node 应用**占用，而不是 PM2 的 jingfang。处理：
+
+1. 查 3000 端口进程：`sudo ss -tlnp | grep 3000`，记下 pid。
+2. 停掉该进程：`sudo kill <pid>`（或到 1Panel 里停掉对应 Node 站点）。
+3. 确认 3000 已空：`sudo ss -tlnp | grep 3000` 应无输出。
+4. 用 PM2 重新启动经方：`cd /var/www/jingfang-web && pm2 start backend/app.js --name jingfang`，再 `pm2 save`。
+
+建议在 1Panel 里停用或删除占用 3000 的 Node 站点，避免重启后再次占用。
+
+### HTTPS 访问不了
+
+1. **Nginx 是否监听 443**：`sudo ss -tlnp | grep 443`，应有 nginx。
+2. **配置里是否写了 443 和证书**：`grep -E "listen 443|ssl_certificate" /etc/nginx/sites-available/jingfang`，应有 `listen 443 ssl` 和 `ssl_certificate`、`ssl_certificate_key`。
+3. **证书文件是否存在**：`ls -la /etc/nginx/ssl/`，应有 `.pem` 和 `.key`。
+4. **云安全组**：入方向放行 **443** 端口（TCP，来源 0.0.0.0/0）。
+
+若 443 未监听，按本文「第七步」在站点配置里增加 `listen 443 ssl` 和证书路径，保存后 `sudo nginx -t && sudo systemctl reload nginx`。
+
 ### 数据库连接失败
 
 - 检查 `backend/config/db.js` 配置
 - 远程数据库需放行 3306 端口
 
-### SSL 申请失败
+### SSL 申请失败（certbot HTTP 验证）
 
-- 确认 80 端口可从公网访问
-- 确认域名已正确解析到本机 IP
+- 国内服务器 + 未备案域名：HTTP 验证常被拦截，改用本文「第七步 方式 A」acme.sh + 腾讯云 DNS API（DNS 验证）。
+- 若用 acme.sh dns_tencent，环境变量必须是 **Tencent_SecretId**、**Tencent_SecretKey**（不是 TENCENTCLOUD_*），且不要用 sudo 跑 acme.sh。
+- 确认域名已正确解析到本机 IP；云安全组放行 80、443。
