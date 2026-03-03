@@ -87,7 +87,8 @@ const alipay = {
   },
   get returnUrl() {
     const base = baseUrl.replace(/\/$/, "");
-    return base ? `${base}/${this.returnPath}` : `/${this.returnPath}`;
+    const path = base ? `${base}/${this.returnPath}` : `/${this.returnPath}`;
+    return `${path}${path.includes("?") ? "&" : "?"}from=alipay`;
   },
 };
 

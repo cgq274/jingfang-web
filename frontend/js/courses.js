@@ -619,7 +619,41 @@ function applyFilterFromUrl() {
   if (btn) btn.click();
 }
 
+/** 从支付宝 return_url 返回时轮询「我的课程」并更新页面上的已购状态 */
+function pollMyCoursesAfterAlipayReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("from") !== "alipay" || !getToken()) return;
+  let attempts = 0;
+  const maxAttempts = 6;
+  const intervalMs = 2000;
+  const timer = setInterval(async () => {
+    attempts += 1;
+    try {
+      const data = await getMyCourses();
+      const items = Array.isArray(data.items) ? data.items : [];
+      const newOwned = new Set(items.map((c) => c.id));
+      const changed = newOwned.size !== ownedCourseIds.size || [...newOwned].some((id) => !ownedCourseIds.has(id));
+      ownedCourseIds = newOwned;
+      if (changed) {
+        items.forEach((c) => updateCourseCardButton(c.id, c.source === "free"));
+      }
+      if (changed || attempts >= maxAttempts) {
+        clearInterval(timer);
+        if (changed) {
+          const tip = document.createElement("p");
+          tip.className = "text-sm text-green-600 text-center py-2";
+          tip.textContent = "支付已确认，课程已加入学习中心，可前往「会员中心」观看。";
+          const container = document.querySelector(".course-filter-btn")?.closest(".flex");
+          if (container) container.after(tip);
+        }
+      }
+    } catch (_) {}
+    if (attempts >= maxAttempts) clearInterval(timer);
+  }, intervalMs);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadCourses();
+  pollMyCoursesAfterAlipayReturn();
 });
 

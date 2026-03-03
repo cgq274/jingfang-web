@@ -20,12 +20,21 @@ const app = express();
 
 app.use(cors());
 
-// 微信支付回调需要原始 body 验签，必须在 express.json() 之前注册
+// 支付回调必须在 express.json() 之前注册，避免 body 被错误解析或消费
+// 微信：原始 JSON body 验签
 app.post(
   "/api/payment/wechat/notify",
   express.raw({ type: "application/json", limit: "1mb" }),
   (req, res) => {
     paymentService.handleWechatNotify(req.body, req.headers, res);
+  }
+);
+// 支付宝：form 表单 POST，必须用 urlencoded 解析
+app.post(
+  "/api/payment/alipay/notify",
+  express.urlencoded({ extended: true, limit: "1mb" }),
+  (req, res) => {
+    paymentService.handleAlipayNotify(req.body, res);
   }
 );
 

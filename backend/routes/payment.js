@@ -78,10 +78,7 @@ router.get("/payment/status", authMiddleware, (req, res) => {
   });
 });
 
-/** 支付宝异步通知（form 表单 POST，body 为 application/x-www-form-urlencoded） */
-router.post("/payment/alipay/notify", express.urlencoded({ extended: true }), async (req, res) => {
-  await paymentService.handleAlipayNotify(req.body, res);
-});
+// 支付宝异步通知已移至 app.js（在 express.json() 之前注册，确保 body 正确解析）
 
 module.exports = router;
 module.exports.handleWechatNotify = paymentService.handleWechatNotify;
