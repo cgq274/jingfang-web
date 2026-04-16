@@ -4,6 +4,11 @@
 const { pool } = require("../config/db");
 const { wechat: wechatConfig, alipay: alipayConfig } = require("../config/payment");
 
+/** 微信/支付宝商户订单号（6-32位），当前采用 ORD + 6位补零订单ID */
+function buildOutTradeNo(orderId) {
+  return `ORD${String(orderId).padStart(6, "0")}`;
+}
+
 /** 根据第三方支付回调确认订单并写入 user_courses（供微信/支付宝回调使用） */
 async function confirmOrderPaid(orderId, paymentMethod, paymentId) {
   const [rows] = await pool.execute(
@@ -44,7 +49,7 @@ async function createWechatNativePay(order, description) {
     key: wechatConfig.apiV3Key || undefined,
   });
   const totalCents = Math.round(Number(order.amount) * 100);
-  const outTradeNo = `ORD${order.id}`;
+  const outTradeNo = buildOutTradeNo(order.id);
   const params = {
     description: description || `课程订单-${order.id}`,
     out_trade_no: outTradeNo,
@@ -159,7 +164,7 @@ async function createAlipayPagePay(order, subject) {
     gateway: alipayConfig.gateway,
     keyType: "PKCS8",
   });
-  const outTradeNo = `ORD${order.id}`;
+  const outTradeNo = buildOutTradeNo(order.id);
   const totalAmount = Number(order.amount).toFixed(2);
   const bizContent = {
     out_trade_no: outTradeNo,
