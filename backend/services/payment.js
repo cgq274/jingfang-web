@@ -53,7 +53,21 @@ async function createWechatNativePay(order, description) {
   };
   const result = await pay.transactions_native(params);
   if (result.status !== 200 || !result.code_url) {
-    throw new Error(result.message || "微信下单失败");
+    const detail = {
+      status: result.status,
+      code: result.code,
+      message: result.message,
+      err_code: result.err_code,
+      err_code_des: result.err_code_des,
+      body: result.data || result,
+    };
+    console.error("[微信下单] 微信网关返回异常:", JSON.stringify(detail));
+    throw new Error(
+      result.err_code_des ||
+      result.message ||
+      result.code ||
+      "微信下单失败"
+    );
   }
   return { codeUrl: result.code_url, outTradeNo };
 }
