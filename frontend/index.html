@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 首页</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 首页</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body>
     <style type="text/tailwindcss" id="global-styles-root">
       @layer base {
         :root {
@@ -87,11 +87,11 @@
           
           <!-- 导航菜单 -->
           <nav id="main-nav" class="hidden md:flex flex-col md:flex-row items-center w-full md:w-auto order-3 md:order-2 space-y-2 md:space-y-0 md:space-x-8 mt-4 md:mt-0">
-            <a href="#home" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">首页</a>
+            <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">首页</a>
             <a href="courses.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">课程</a>
-            <a href="#instructors" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">导师</a>
-            <a href="#pricing" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">会员</a>
-            <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">关于</a>
+            <a href="instructors.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">导师</a>
+            <a href="membership.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">会员</a>
+            <a href="about.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">关于</a>
           </nav>
           
           <!-- 登录按钮 / 已登录状态 -->
@@ -128,7 +128,7 @@
             专业的<span class="text-yellow-300">金融教育</span>平台
           </h1>
           <p class="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl mx-auto">
-            为金融从业者、投资者和学生提供最专业的培训课程，从基础到高级，全面提升您的金融知识与实战能力
+            由专业教研与服务团队持续打磨课程内容，聚焦投资知识框架、方法工具与风险意识，支持单课学习与会员全站学习
           </p>
           
           <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
@@ -185,97 +185,41 @@
     <section id="instructors" class="py-20">
       <div class="container mx-auto px-6">
         <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold text-gray-900 mb-4">资深金融导师</h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto">我们的导师团队由金融行业资深专家组成，拥有丰富的实战经验</p>
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">导师与答疑支持</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">由专业团队提供课程研发与社群答疑服务，持续优化学习内容与支持体验</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <!-- 导师卡片 1 -->
-          <div class="text-center group">
-            <div class="relative mb-6">
-              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
-                <img src="https://picsum.photos/400/400?random=4" alt="张教授" class="w-full h-full object-cover">
-              </div>
-              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                投资专家
-              </div>
+          <div class="bg-white rounded-2xl p-7 shadow-soft border border-gray-100 text-center hover-lift">
+            <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 mx-auto mb-4 flex items-center justify-center">
+              <iconify-icon icon="heroicons:user-group" class="text-2xl"></iconify-icon>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">张明教授</h3>
-            <p class="text-gray-600 mb-4">前高盛投资总监，20年投资经验</p>
-            <div class="flex justify-center space-x-3">
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
-              </a>
-            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">专业导师团队</h3>
+            <p class="text-gray-600">由导师、教研与学习服务协同支持课程研发和学习答疑。</p>
           </div>
-          
-          <!-- 导师卡片 2 -->
-          <div class="text-center group">
-            <div class="relative mb-6">
-              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
-                <img src="https://picsum.photos/400/400?random=5" alt="李博士" class="w-full h-full object-cover">
-              </div>
-              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                风控专家
-              </div>
+
+          <div class="bg-white rounded-2xl p-7 shadow-soft border border-gray-100 text-center hover-lift">
+            <div class="w-14 h-14 rounded-full bg-green-100 text-green-600 mx-auto mb-4 flex items-center justify-center">
+              <iconify-icon icon="heroicons:chat-bubble-left-right" class="text-2xl"></iconify-icon>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">李华博士</h3>
-            <p class="text-gray-600 mb-4">风险管理专家，15年银行风控经验</p>
-            <div class="flex justify-center space-x-3">
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
-              </a>
-            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">知识答疑</h3>
+            <p class="text-gray-600">社群文字答疑，聚焦知识点、概念、框架与工具方法。</p>
           </div>
-          
-          <!-- 导师卡片 3 -->
-          <div class="text-center group">
-            <div class="relative mb-6">
-              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
-                <img src="https://picsum.photos/400/400?random=6" alt="王总监" class="w-full h-full object-cover">
-              </div>
-              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                金融科技
-              </div>
+
+          <div class="bg-white rounded-2xl p-7 shadow-soft border border-gray-100 text-center hover-lift">
+            <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 mx-auto mb-4 flex items-center justify-center">
+              <iconify-icon icon="heroicons:shield-check" class="text-2xl"></iconify-icon>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">王强总监</h3>
-            <p class="text-gray-600 mb-4">金融科技公司CTO，区块链专家</p>
-            <div class="flex justify-center space-x-3">
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
-              </a>
-            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">合规边界</h3>
+            <p class="text-gray-600">不荐股、不指导交易、不承诺收益，课程仅用于知识学习。</p>
           </div>
-          
-          <!-- 导师卡片 4 -->
-          <div class="text-center group">
-            <div class="relative mb-6">
-              <div class="w-40 h-40 rounded-full overflow-hidden mx-auto border-4 border-white shadow-hard group-hover:border-blue-200 transition-all duration-300">
-                <img src="https://picsum.photos/400/400?random=7" alt="赵分析师" class="w-full h-full object-cover">
-              </div>
-              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                证券分析
-              </div>
+
+          <div class="bg-white rounded-2xl p-7 shadow-soft border border-gray-100 text-center hover-lift">
+            <div class="w-14 h-14 rounded-full bg-purple-100 text-purple-600 mx-auto mb-4 flex items-center justify-center">
+              <iconify-icon icon="heroicons:arrow-trending-up" class="text-2xl"></iconify-icon>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">赵敏分析师</h3>
-            <p class="text-gray-600 mb-4">证券研究所首席分析师，12年从业经验</p>
-            <div class="flex justify-center space-x-3">
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-blue-600">
-                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
-              </a>
-            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">持续扩充</h3>
+            <p class="text-gray-600">根据课程规模与用户反馈持续优化讲师资源和服务能力。</p>
           </div>
         </div>
       </div>
@@ -342,133 +286,127 @@
     <section id="pricing" class="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div class="container mx-auto px-6">
         <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold text-gray-900 mb-4">会员方案选择</h2>
-          <p class="text-xl text-gray-600 max-w-3xl mx-auto">选择适合您的会员方案，开启专业金融学习之旅</p>
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">学习方式选择</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">普通学员可单课购买，会员开通后可学习全部上架课程</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <!-- 普通会员 -->
+          <!-- 普通学员 -->
           <div class="bg-white rounded-2xl p-8 shadow-soft hover-lift border border-gray-200">
             <div class="text-center mb-8">
-              <h3 class="text-2xl font-bold text-gray-900 mb-4">普通会员</h3>
-              <div class="text-5xl font-bold text-gray-900 mb-2">¥299<span class="text-lg text-gray-500">/月</span></div>
-              <p class="text-gray-600">基础学习功能</p>
+              <h3 class="text-2xl font-bold text-gray-900 mb-4">普通学员</h3>
+              <div class="text-5xl font-bold text-gray-900 mb-2">按课购买</div>
+              <p class="text-gray-600">适合按需学习人群</p>
             </div>
             
             <ul class="space-y-4 mb-8">
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>访问所有基础课程</span>
+                <span>支持单课程购买</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>每周直播课程</span>
+                <span>购买后可长期观看已购课程</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>课程资料下载</span>
+                <span>支持课程进度同步</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>社区交流</span>
+                <span>可升级为年度/月度/季度会员</span>
               </li>
               <li class="flex items-center text-gray-400">
                 <iconify-icon icon="heroicons:x-circle" class="mr-3"></iconify-icon>
-                <span>1v1导师辅导</span>
+                <span>不开通会员不可学全站</span>
               </li>
               <li class="flex items-center text-gray-400">
                 <iconify-icon icon="heroicons:x-circle" class="mr-3"></iconify-icon>
-                <span>个性化作业布置</span>
+                <span>不含会员社群答疑</span>
               </li>
             </ul>
             
-            <button class="w-full py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">
-              选择此方案
-            </button>
+            <a href="courses.html" class="block text-center w-full py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">去选购课程</a>
           </div>
           
-          <!-- VIP会员 -->
+          <!-- 年度会员 -->
           <div class="bg-gradient-to-b from-blue-600 to-indigo-700 rounded-2xl p-8 shadow-hard hover-lift relative transform scale-105">
             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span class="px-4 py-2 bg-yellow-500 text-white font-bold rounded-full">推荐</span>
             </div>
             
             <div class="text-center mb-8 text-white">
-              <h3 class="text-2xl font-bold mb-4">VIP会员</h3>
-              <div class="text-5xl font-bold mb-2">¥899<span class="text-lg text-blue-200">/月</span></div>
-              <p class="text-blue-200">尊享专属服务</p>
+              <h3 class="text-2xl font-bold mb-4">年度会员</h3>
+              <div class="text-5xl font-bold mb-2">¥1000<span class="text-lg text-blue-200">/年</span></div>
+              <p class="text-blue-200">全站课程学习权限</p>
             </div>
             
             <ul class="space-y-4 mb-8 text-white">
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
-                <span>包含普通会员所有权益</span>
+                <span>有效期内学习全部上架课程</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
-                <span>每周1v1导师辅导</span>
+                <span>课程资料与内容更新同步开放</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
-                <span>个性化作业布置与批改</span>
+                <span>社群文字知识答疑（非投资建议）</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
-                <span>职业规划指导</span>
+                <span>支持会员到期续费延续学习</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
-                <span>专属学习计划</span>
+                <span>支付前强制阅读风险与合同声明</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-yellow-300 mr-3"></iconify-icon>
-                <span>优先参加线下活动</span>
+                <span>后续可扩展月度/季度会员</span>
               </li>
             </ul>
             
-            <button class="w-full py-3 bg-white text-blue-600 font-bold rounded-full hover:bg-blue-50 transition-all duration-300">
-              选择此方案
-            </button>
+            <a href="membership.html" class="block text-center w-full py-3 bg-white text-blue-600 font-bold rounded-full hover:bg-blue-50 transition-all duration-300">立即开通会员</a>
           </div>
           
-          <!-- 企业方案 -->
+          <!-- 合规声明 -->
           <div class="bg-white rounded-2xl p-8 shadow-soft hover-lift border border-gray-200">
             <div class="text-center mb-8">
-              <h3 class="text-2xl font-bold text-gray-900 mb-4">企业方案</h3>
-              <div class="text-5xl font-bold text-gray-900 mb-2">定制</div>
-              <p class="text-gray-600">团队培训解决方案</p>
+              <h3 class="text-2xl font-bold text-gray-900 mb-4">重要声明</h3>
+              <div class="text-5xl font-bold text-gray-900 mb-2">合规</div>
+              <p class="text-gray-600">购买前请完整阅读</p>
             </div>
             
             <ul class="space-y-4 mb-8">
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>团队账户管理</span>
+                <span>仅提供投资知识教学与框架训练</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>定制化课程内容</span>
+                <span>不荐股、不指导交易、不承诺收益</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>企业内训服务</span>
+                <span>投资决策独立判断、风险自担</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>培训效果评估</span>
+                <span>虚拟商品开通后按规则执行退费</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>专属客户经理</span>
+                <span>禁止账号共享与课程内容传播</span>
               </li>
               <li class="flex items-center">
                 <iconify-icon icon="heroicons:check-circle" class="text-green-500 mr-3"></iconify-icon>
-                <span>API集成支持</span>
+                <span>支付即视为同意相关合同与须知</span>
               </li>
             </ul>
             
-            <button class="w-full py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">
-              联系销售
-            </button>
+            <a href="course-service-contract.html" class="block text-center w-full py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-all duration-300">查看课程合同</a>
           </div>
         </div>
       </div>
@@ -478,19 +416,19 @@
       <div class="container mx-auto px-6">
         <div class="max-w-4xl mx-auto text-center">
           <h2 class="text-4xl font-bold text-gray-900 mb-4">关于敬方教育</h2>
-          <p class="text-xl text-gray-600 mb-8">敬方教育成立于2015年，致力于为金融从业者、投资者和学生提供最专业的培训服务。我们拥有资深导师团队和完善的课程体系，已帮助数万名学员提升金融素养与实战能力。</p>
+          <p class="text-xl text-gray-600 mb-8">我们由专业教研、内容与服务团队共同运营，持续优化课程质量与学习支持。平台以知识教学为核心，不提供投资建议、不荐股、不承诺收益。</p>
           <div class="flex flex-wrap justify-center gap-8 text-gray-600">
             <div class="flex items-center">
               <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-blue-600 mr-2"></iconify-icon>
-              <span>专业资质认证</span>
+              <span>知识教学与方法训练</span>
             </div>
             <div class="flex items-center">
               <iconify-icon icon="heroicons:user-group" class="text-2xl text-blue-600 mr-2"></iconify-icon>
-              <span>10万+ 学员信赖</span>
+              <span>单课购买 + 会员学习</span>
             </div>
             <div class="flex items-center">
               <iconify-icon icon="heroicons:building-office-2" class="text-2xl text-blue-600 mr-2"></iconify-icon>
-              <span>与 50+ 机构合作</span>
+              <span>规则透明，持续迭代</span>
             </div>
           </div>
         </div>
@@ -513,16 +451,16 @@
             </div>
             <p id="footer-intro" class="text-gray-400 mb-6">致力于提供最专业的金融教育培训，帮助学员在金融领域取得成功。</p>
             <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-white">
+              <a href="#" title="微信" aria-label="微信" class="text-gray-400 hover:text-white">
                 <iconify-icon icon="mdi:wechat" class="text-2xl"></iconify-icon>
               </a>
-              <a href="#" class="text-gray-400 hover:text-white">
+              <a href="#" title="LinkedIn" aria-label="LinkedIn" class="text-gray-400 hover:text-white">
                 <iconify-icon icon="mdi:linkedin" class="text-2xl"></iconify-icon>
               </a>
-              <a href="#" class="text-gray-400 hover:text-white">
+              <a href="#" title="Twitter" aria-label="Twitter" class="text-gray-400 hover:text-white">
                 <iconify-icon icon="mdi:twitter" class="text-2xl"></iconify-icon>
               </a>
-              <a href="#" class="text-gray-400 hover:text-white">
+              <a href="#" title="YouTube" aria-label="YouTube" class="text-gray-400 hover:text-white">
                 <iconify-icon icon="mdi:youtube" class="text-2xl"></iconify-icon>
               </a>
             </div>
@@ -534,8 +472,8 @@
             <ul class="space-y-3">
               <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">首页</a></li>
               <li><a href="courses.html" class="text-gray-400 hover:text-white transition-colors duration-200">课程中心</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">导师团队</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">会员方案</a></li>
+              <li><a href="instructors.html" class="text-gray-400 hover:text-white transition-colors duration-200">导师与答疑</a></li>
+              <li><a href="membership.html" class="text-gray-400 hover:text-white transition-colors duration-200">会员方案</a></li>
               <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">关于我们</a></li>
             </ul>
           </div>
@@ -575,7 +513,7 @@
               <p class="text-gray-400 mb-3">订阅我们的新闻通讯</p>
               <div class="flex">
                 <input type="email" placeholder="您的邮箱" class="flex-1 px-4 py-2 rounded-l-lg bg-gray-800 text-white border-0 focus:ring-2 focus:ring-blue-500">
-                <button class="px-4 py-2 bg-blue-600 rounded-r-lg hover:bg-blue-700 transition-colors duration-200">
+                <button title="订阅邮件" aria-label="订阅邮件" class="px-4 py-2 bg-blue-600 rounded-r-lg hover:bg-blue-700 transition-colors duration-200">
                   <iconify-icon icon="heroicons:paper-airplane"></iconify-icon>
                 </button>
               </div>
@@ -585,6 +523,7 @@
         
         <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
           <p id="footer-copyright">© 2025 敬方教育. 保留所有权利.</p>
+          <p class="mt-2 text-sm">本网站内容仅为投资知识科普与教学，不构成投资建议。投资有风险，入市需谨慎。</p>
           <p id="footer-icp" class="mt-2 text-sm hidden"></p>
         </div>
       </div>

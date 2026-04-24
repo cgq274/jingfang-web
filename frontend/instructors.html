@@ -1,762 +1,116 @@
 <!DOCTYPE html>
-<html><head><title></title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 导师团队</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body><style id="instructors-styles-root" type="text/tailwindcss">
-      @layer utilities {
-        .instructor-card {
-          @apply transition-all duration-500 hover:-translate-y-3;
-        }
-        .instructor-image {
-          @apply w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl relative z-10;
-        }
-        .expertise-badge {
-          @apply px-3 py-1 rounded-full text-xs font-medium;
-        }
-        .social-hover {
-          @apply transition-all duration-300 hover:scale-110 hover:-translate-y-1;
-        }
-        .stats-card {
-          @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-lg border border-gray-100;
-        }
-      }
-    </style>
-    
-
-    <header id="instructors-header-root" class="sticky top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <a href="index.html" class="flex items-center space-x-3">
-              <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center">
-                <iconify-icon icon="ph:graduation-cap-fill" class="text-2xl text-white"></iconify-icon>
-              </div>
-              <div>
-                <h1 class="text-2xl font-bold text-gray-900">敬方教育</h1>
-                <p class="text-sm text-gray-600">金融培训专家</p>
-              </div>
-            </a>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>敬方教育 - 导师与答疑支持</title>
+  <script src="./js/tailwindcss.js"></script>
+  <script src="./js/iconify-icon.min.js"></script>
+</head>
+<body>
+  <header id="instructors-header-root" class="sticky top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg">
+    <div class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center">
+            <iconify-icon icon="ph:graduation-cap-fill" class="text-2xl text-white"></iconify-icon>
           </div>
-          
-          <nav class="hidden md:flex items-center space-x-8">
-            <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">首页</a>
-            <a href="courses.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">课程</a>
-            <a href="instructors.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">导师</a>
-            <a href="membership.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">会员</a>
-            <a href="about.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">关于</a>
-          </nav>
-          
-          <div class="flex items-center space-x-4">
-            <a href="member.html" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg">
-              进入学习中心
-            </a>
-            <button class="md:hidden">
-              <iconify-icon icon="heroicons:bars-3" class="text-2xl text-gray-700"></iconify-icon>
-            </button>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900">敬方教育</h1>
+            <p class="text-sm text-gray-600">金融培训专家</p>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">首页</a>
+          <a href="courses.html" class="text-gray-700 hover:text-blue-600 font-medium">课程</a>
+          <a href="instructors.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">导师</a>
+          <a href="membership.html" class="text-gray-700 hover:text-blue-600 font-medium">会员</a>
+          <a href="about.html" class="text-gray-700 hover:text-blue-600 font-medium">关于</a>
+        </nav>
+
+        <a href="member.html" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700">
+          进入学习中心
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="bg-gradient-to-br from-indigo-50 via-white to-blue-50 py-16 md:py-20">
+    <div class="container mx-auto px-6">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-5">导师与答疑支持</h2>
+        <p class="text-lg text-gray-600">
+          我们由专业导师与课程服务团队提供内容研发和答疑支持，并持续优化学习体验。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 bg-white rounded-2xl shadow-lg border border-gray-200 p-6 text-center">
+          <div class="w-36 h-36 rounded-full mx-auto mb-5 bg-blue-100 text-blue-700 flex items-center justify-center text-4xl font-bold">导</div>
+          <h3 class="text-2xl font-bold text-gray-900">课程教研团队</h3>
+          <p class="text-blue-600 font-medium mt-1">导师 / 教研 / 学习服务</p>
+          <div class="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm">
+            <iconify-icon icon="heroicons:academic-cap" class="mr-1"></iconify-icon>
+            投资知识教学与学习方法指导
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+          <div class="rounded-2xl border border-gray-200 p-6">
+            <h4 class="text-xl font-bold text-gray-900 mb-3">负责范围</h4>
+            <ul class="space-y-2 text-gray-700 leading-7">
+              <li>1．课程框架设计与内容更新（基础认知、方法框架、工具应用）。</li>
+              <li>2．社群文字答疑（知识点、概念、框架、工具解释）。</li>
+              <li>3．学习路径建议与阶段复盘建议（非个股/非交易建议）。</li>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl border-2 border-amber-200 bg-amber-50 p-6">
+            <h4 class="text-xl font-bold text-amber-800 mb-3">答疑规则与边界</h4>
+            <ul class="space-y-2 text-gray-700 leading-7">
+              <li>1．答疑时段：工作日 10:00-18:00（节假日顺延）。</li>
+              <li>2．回复时效：通常 24-48 小时内回复。</li>
+              <li>3．不提供：个股/基金买卖建议、仓位建议、择时建议、收益承诺。</li>
+              <li>4．课程内容仅供学习参考，不构成投资建议，投资风险由用户自行承担。</li>
+            </ul>
           </div>
         </div>
       </div>
-    </header>
-    
-    
-    <section id="instructors-hero-root" class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-16 md:py-24">
-      <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto text-center">
-          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            顶尖金融<span class="text-indigo-600">导师团队</span>
-          </h1>
-          <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-            汇聚国内外金融行业资深专家，拥有丰富的实战经验和教学经验，为您提供最专业的金融教育培训
+    </div>
+  </section>
+
+  <section class="py-14 bg-gray-50">
+    <div class="container mx-auto px-6">
+      <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="rounded-2xl bg-white border border-gray-200 p-6">
+          <h4 class="text-lg font-bold text-gray-900 mb-2">团队扩充计划</h4>
+          <p class="text-gray-700 leading-7">我们将持续扩充讲师与助教资源，新增导师信息会在本页公示。</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-gray-200 p-6">
+          <h4 class="text-lg font-bold text-gray-900 mb-2">联系与支持</h4>
+          <p class="text-gray-700 leading-7">
+            如需课程建议或答疑支持，请先加入课程学习与社群渠道；平台将按规则提供统一回复与服务。
           </p>
-          
-          <div class="flex flex-wrap justify-center gap-6 mb-12">
-            <div class="stats-card">
-              <div class="text-3xl font-bold text-indigo-600 mb-2">50+</div>
-              <div class="text-gray-700">资深导师</div>
-            </div>
-            <div class="stats-card">
-              <div class="text-3xl font-bold text-indigo-600 mb-2">15+</div>
-              <div class="text-gray-700">平均从业年限</div>
-            </div>
-            <div class="stats-card">
-              <div class="text-3xl font-bold text-indigo-600 mb-2">98%</div>
-              <div class="text-gray-700">学员满意度</div>
-            </div>
-            <div class="stats-card">
-              <div class="text-3xl font-bold text-indigo-600 mb-2">5000+</div>
-              <div class="text-gray-700">成功案例</div>
-            </div>
-          </div>
-          
-          <div class="flex justify-center">
-            <a href="#instructors-list" class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center">
-              <iconify-icon icon="heroicons:arrow-down" class="mr-2"></iconify-icon>
-              查看所有导师
-            </a>
-          </div>
+          <a href="membership.html" class="inline-block mt-4 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-medium">
+            查看会员与答疑服务
+          </a>
         </div>
       </div>
-      
-      <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-full opacity-20 blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-full opacity-20 blur-3xl"></div>
-    </section>
+    </div>
+  </section>
 
-    
-    <section id="instructors-featured-root" class="py-16 bg-white">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">明星<span class="text-indigo-600">导师阵容</span></h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">我们的导师团队由金融行业领军人物组成，他们在各自领域拥有卓越成就和丰富经验</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- 导师卡片 1 -->
-          <div class="instructor-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" style="transform: translateY(-3px);">
-            <div class="relative pt-10 pb-6 px-6 bg-gradient-to-b from-indigo-50 to-white">
-              <div class="instructor-image">
-                <img src="https://picsum.photos/400/400?random=31" alt="张教授" class="w-full h-full object-cover rounded-full">
-                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                  <iconify-icon icon="heroicons:academic-cap" class="text-white text-lg"></iconify-icon>
-                </div>
-              </div>
-              
-              <div class="text-center mt-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-1">张明远 教授</h3>
-                <p class="text-gray-600 mb-4">清华大学金融学院教授</p>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6">
-                  <span class="expertise-badge bg-blue-100 text-blue-800">投资分析</span>
-                  <span class="expertise-badge bg-green-100 text-green-800">资产配置</span>
-                  <span class="expertise-badge bg-amber-100 text-amber-800">宏观经济</span>
-                </div>
-                
-                <p class="text-gray-700 text-sm mb-6">拥有20年金融教学与研究经验，出版多部投资学专著，曾担任多家上市公司独立董事。</p>
-                
-                <div class="flex justify-center space-x-4">
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white">
-                    <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-                  </a>
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white">
-                    <iconify-icon icon="mdi:wechat" class="text-xl"></iconify-icon>
-                  </a>
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-600 hover:text-white">
-                    <iconify-icon icon="heroicons:academic-cap" class="text-xl"></iconify-icon>
-                  </a>
-                </div>
-              </div>
-            </div>
-            
-            <div class="border-t border-gray-100 p-6">
-              <div class="flex justify-between items-center">
-                <div>
-                  <div class="text-sm text-gray-600">咨询价格</div>
-                  <div class="text-xl font-bold text-gray-900">¥2,000/小时</div>
-                </div>
-                <button class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300">
-                  预约咨询
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 导师卡片 2 -->
-          <div class="instructor-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" style="transform: translateY(-3px);">
-            <div class="relative pt-10 pb-6 px-6 bg-gradient-to-b from-green-50 to-white">
-              <div class="instructor-image">
-                <img src="https://picsum.photos/400/400?random=32" alt="李博士" class="w-full h-full object-cover rounded-full">
-                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-                  <iconify-icon icon="heroicons:shield-check" class="text-white text-lg"></iconify-icon>
-                </div>
-              </div>
-              
-              <div class="text-center mt-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-1">李思源 博士</h3>
-                <p class="text-gray-600 mb-4">前摩根士丹利风险总监</p>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6">
-                  <span class="expertise-badge bg-red-100 text-red-800">风险管理</span>
-                  <span class="expertise-badge bg-green-100 text-green-800">合规管理</span>
-                  <span class="expertise-badge bg-gray-100 text-gray-800">内部控制</span>
-                </div>
-                
-                <p class="text-gray-700 text-sm mb-6">在国际投行拥有15年风险管理经验，精通巴塞尔协议，曾主导多个大型金融机构风控体系建设。</p>
-                
-                <div class="flex justify-center space-x-4">
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white">
-                    <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-                  </a>
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white">
-                    <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
-                  </a>
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-600 hover:text-white">
-                    <iconify-icon icon="heroicons:document-text" class="text-xl"></iconify-icon>
-                  </a>
-                </div>
-              </div>
-            </div>
-            
-            <div class="border-t border-gray-100 p-6">
-              <div class="flex justify-between items-center">
-                <div>
-                  <div class="text-sm text-gray-600">咨询价格</div>
-                  <div class="text-xl font-bold text-gray-900">¥2,500/小时</div>
-                </div>
-                <button class="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-medium rounded-full hover:from-green-700 hover:to-emerald-700 transition-all duration-300">
-                  预约咨询
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 导师卡片 3 -->
-          <div class="instructor-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" style="transform: translateY(-3px);">
-            <div class="relative pt-10 pb-6 px-6 bg-gradient-to-b from-purple-50 to-white">
-              <div class="instructor-image">
-                <img src="https://picsum.photos/400/400?random=33" alt="王总监" class="w-full h-full object-cover rounded-full">
-                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
-                  <iconify-icon icon="heroicons:cpu-chip" class="text-white text-lg"></iconify-icon>
-                </div>
-              </div>
-              
-              <div class="text-center mt-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-1">王创新 总监</h3>
-                <p class="text-gray-600 mb-4">蚂蚁金服前技术总监</p>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6">
-                  <span class="expertise-badge bg-purple-100 text-purple-800">金融科技</span>
-                  <span class="expertise-badge bg-pink-100 text-pink-800">区块链</span>
-                  <span class="expertise-badge bg-blue-100 text-blue-800">人工智能</span>
-                </div>
-                
-                <p class="text-gray-700 text-sm mb-6">金融科技领域专家，主导过多个亿级用户规模的金融产品开发，对FinTech创新有深刻见解。</p>
-                
-                <div class="flex justify-center space-x-4">
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white">
-                    <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-                  </a>
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-600 hover:text-white">
-                    <iconify-icon icon="mdi:github" class="text-xl"></iconify-icon>
-                  </a>
-                  <a href="#" class="social-hover w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white">
-                    <iconify-icon icon="mdi:youtube" class="text-xl"></iconify-icon>
-                  </a>
-                </div>
-              </div>
-            </div>
-            
-            <div class="border-t border-gray-100 p-6">
-              <div class="flex justify-between items-center">
-                <div>
-                  <div class="text-sm text-gray-600">咨询价格</div>
-                  <div class="text-xl font-bold text-gray-900">¥3,000/小时</div>
-                </div>
-                <button class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
-                  预约咨询
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="container mx-auto px-6">
+      <div class="text-center text-gray-400 text-sm">
+        <p>© 2024 敬方教育金融培训平台. 保留所有权利.</p>
+        <p class="mt-2">本网站内容仅为投资知识科普与教学，不构成投资建议。投资有风险，入市需谨慎。</p>
       </div>
-    </section>
- 
-    
-    <section id="instructors-list-root" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-6">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10">
-          <div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">所有<span class="text-indigo-600">导师介绍</span></h2>
-            <p class="text-gray-600">按专业领域筛选，找到最适合您的导师</p>
-          </div>
-          
-          <div class="mt-4 lg:mt-0">
-            <div class="flex flex-wrap gap-3">
-              <button class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-full">全部导师</button>
-              <button class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-300">投资分析</button>
-              <button class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-300">风险管理</button>
-              <button class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-300">金融科技</button>
-              <button class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-300">资产配置</button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- 导师列表项 1 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=34" alt="赵分析师" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">赵敏 分析师</h4>
-                <p class="text-sm text-gray-600">高盛前股票分析师</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full mb-2">股票分析</span>
-              <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">行业研究</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">10年股票分析经验，擅长消费和科技行业研究，曾准确预测多个牛股。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥1,800/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 2 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=35" alt="钱经理" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">钱多多 经理</h4>
-                <p class="text-sm text-gray-600">前汇丰银行财富管理</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full mb-2">财富管理</span>
-              <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-medium rounded-full">家族信托</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">12年私人银行经验，服务超高净值客户超过200人，管理资产规模超50亿。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥2,200/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 3 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=36" alt="孙总监" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">孙合规 总监</h4>
-                <p class="text-sm text-gray-600">德勤前合规总监</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full mb-2">合规管理</span>
-              <span class="inline-block px-3 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">审计风控</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">15年四大会计师事务所经验，精通国内外金融监管政策，擅长合规体系建设。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥2,000/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 4 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=37" alt="周博士" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">周量化 博士</h4>
-                <p class="text-sm text-gray-600">MIT金融工程博士</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full mb-2">量化交易</span>
-              <span class="inline-block px-3 py-1 bg-pink-100 text-pink-800 text-xs font-medium rounded-full">算法策略</span>
-            </div>
-            <p class="text-gray
-&lt;p class=" text-gray-700="" text-sm="" mb-4"="">MIT金融工程博士，曾在华尔街对冲基金工作，开发过多套盈利量化策略。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥3,500/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 5 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=38" alt="吴教授" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">吴国际 教授</h4>
-                <p class="text-sm text-gray-600">复旦大学国际金融教授</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full mb-2">国际金融</span>
-              <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">外汇市场</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">18年国际金融教学经验，精通汇率理论与实务，多次准确预测汇率走势。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥1,900/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 6 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=39" alt="郑总监" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">郑并购 总监</h4>
-                <p class="text-sm text-gray-600">前高盛并购部总监</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full mb-2">并购重组</span>
-              <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">企业融资</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">主导过数十个大型并购项目，总交易金额超过500亿美元，精通并购全流程。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥4,000/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 7 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=40" alt="王总监" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">王区块链 总监</h4>
-                <p class="text-sm text-gray-600">火币前技术总监</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full mb-2">区块链</span>
-              <span class="inline-block px-3 py-1 bg-pink-100 text-pink-800 text-xs font-medium rounded-full">数字货币</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">区块链技术专家，参与多个公链开发，对DeFi和NFT有深入研究。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥2,800/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-          
-          <!-- 导师列表项 8 -->
-          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-            <div class="flex items-center mb-4">
-              <img src="https://picsum.photos/100/100?random=41" alt="冯博士" class="w-16 h-16 rounded-full object-cover mr-4">
-              <div>
-                <h4 class="font-bold text-gray-900">冯数据 博士</h4>
-                <p class="text-sm text-gray-600">斯坦福数据科学博士</p>
-              </div>
-            </div>
-            <div class="mb-4">
-              <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-medium rounded-full mb-2">数据科学</span>
-              <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">机器学习</span>
-            </div>
-            <p class="text-gray-700 text-sm mb-4">金融数据科学专家，擅长使用机器学习进行金融预测和风险建模。</p>
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-900">¥3,200/小时</span>
-              <button class="px-4 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg hover:bg-indigo-100">
-                查看详情
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="text-center mt-12">
-          <button class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-            加载更多导师
-          </button>
-        </div>
-      </div>
-    </section>
-    
-    
-    <section id="instructors-consultation-root" class="py-16 bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
-      <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl font-bold mb-6">一对一<span class="text-yellow-300">导师咨询</span>服务</h2>
-          <p class="text-xl mb-10 opacity-90">根据您的具体需求，匹配最适合的导师，提供个性化指导方案</p>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
-                <iconify-icon icon="heroicons:user-plus" class="text-3xl"></iconify-icon>
-              </div>
-              <h3 class="text-xl font-bold mb-4">匹配导师</h3>
-              <p class="opacity-90">根据您的学习目标和专业需求，智能匹配最适合的导师</p>
-            </div>
-            
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
-                <iconify-icon icon="heroicons:calendar" class="text-3xl"></iconify-icon>
-              </div>
-              <h3 class="text-xl font-bold mb-4">预约时间</h3>
-              <p class="opacity-90">灵活选择咨询时间，支持线上视频会议或线下面对面交流</p>
-            </div>
-            
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
-                <iconify-icon icon="heroicons:document-check" class="text-3xl"></iconify-icon>
-              </div>
-              <h3 class="text-xl font-bold mb-4">获得指导</h3>
-              <p class="opacity-90">获得专业解答和个性化建议，解决实际工作中的难题</p>
-            </div>
-          </div>
-          
-          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 max-w-2xl mx-auto">
-            <h3 class="text-2xl font-bold mb-6">立即预约导师咨询</h3>
-            <div class="space-y-4">
-              <div class="flex flex-col md:flex-row gap-4">
-                <input type="text" placeholder="您的姓名" class="flex-1 px-6 py-3 rounded-full bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50">
-                <input type="email" placeholder="电子邮箱" class="flex-1 px-6 py-3 rounded-full bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50">
-              </div>
-              <div class="flex flex-col md:flex-row gap-4">
-                <select class="flex-1 px-6 py-3 rounded-full bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-white/50">
-                  <option value="" disabled="" selected="">选择咨询领域</option>
-                  <option value="investment">投资分析</option>
-                  <option value="risk">风险管理</option>
-                  <option value="fintech">金融科技</option>
-                  <option value="wealth">财富管理</option>
-                </select>
-                <select class="flex-1 px-6 py-3 rounded-full bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-white/50">
-                  <option value="" disabled="" selected="">期望咨询时长</option>
-                  <option value="1">1小时</option>
-                  <option value="2">2小时</option>
-                  <option value="3">3小时</option>
-                </select>
-              </div>
-              <textarea placeholder="咨询需求描述" rows="3" class="w-full px-6 py-3 rounded-2xl bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"></textarea>
-              <button class="w-full py-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-gray-900 font-bold rounded-full hover:from-yellow-500 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-                提交预约申请
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    
-    <footer id="instructors-footer-root" class="bg-gray-900 text-white py-12">
-      <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <div class="flex items-center space-x-3 mb-6">
-              <div class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center">
-                <iconify-icon icon="ph:graduation-cap-fill" class="text-2xl text-white"></iconify-icon>
-              </div>
-              <div>
-                <h3 id="footer-site-name" class="text-xl font-bold">敬方教育</h3>
-                <p id="footer-slogan" class="text-gray-400 text-sm">金融培训专家</p>
-              </div>
-            </div>
-            <p id="footer-intro" class="text-gray-400 mb-6">专业的金融教育培训平台，致力于培养金融行业精英人才。</p>
-            <div class="flex space-x-4">
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition-colors duration-300">
-                <iconify-icon icon="mdi:wechat" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition-colors duration-300">
-                <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition-colors duration-300">
-                <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition-colors duration-300">
-                <iconify-icon icon="mdi:youtube" class="text-xl"></iconify-icon>
-              </a>
-            </div>
-          </div>
-          
-          <div>
-            <h4 class="text-lg font-bold mb-6">快速链接</h4>
-            <ul class="space-y-3">
-              <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors duration-200">首页</a></li>
-              <li><a href="courses.html" class="text-gray-400 hover:text-white transition-colors duration-200">课程中心</a></li>
-              <li><a href="instructors.html" class="text-gray-400 hover:text-white transition-colors duration-200">导师团队</a></li>
-              <li><a href="membership.html" class="text-gray-400 hover:text-white transition-colors duration-200">会员方案</a></li>
-              <li><a href="about.html" class="text-gray-400 hover:text-white transition-colors duration-200">关于我们</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 class="text-lg font-bold mb-6">服务支持</h4>
-            <ul class="space-y-3">
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">帮助中心</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">常见问题</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">联系我们</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">隐私政策</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">用户协议</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 class="text-lg font-bold mb-6">联系我们</h4>
-            <ul class="space-y-4">
-              <li class="flex items-start">
-                <iconify-icon icon="heroicons:map-pin" class="text-indigo-400 mr-3 mt-1"></iconify-icon>
-                <span class="text-gray-400">北京市朝阳区金融街88号敬方大厦</span>
-              </li>
-              <li class="flex items-center">
-                <iconify-icon icon="heroicons:phone" class="text-indigo-400 mr-3"></iconify-icon>
-                <span id="footer-phone" class="text-gray-400">400-123-4567</span>
-              </li>
-              <li class="flex items-center">
-                <iconify-icon icon="heroicons:envelope" class="text-indigo-400 mr-3"></iconify-icon>
-                <span id="footer-email" class="text-gray-400">contact@jingfangedu.com</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="border-t border-gray-800 mt-10 pt-8 text-center text-gray-500 text-sm">
-          <p id="footer-copyright">© 2024 敬方教育金融培训平台. 保留所有权利.</p>
-          <p id="footer-icp" class="mt-2 text-sm hidden"></p>
-        </div>
-      </div>
-    </footer>
-
-<script id="instructors-script-root">(function() { 
-      document.addEventListener('DOMContentLoaded', function() {
-        // 导师筛选功能
-        const filterButtons = document.querySelectorAll('#instructors-list-root button');
-        const instructorItems = document.querySelectorAll('#instructors-list-root > div > div > div.bg-white');
-        
-        filterButtons.forEach(button => {
-          button.addEventListener('click', function() {
-            // 移除所有按钮的active样式
-            filterButtons.forEach(btn => {
-              btn.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
-              if (!btn.classList.contains('bg-gradient-to-r')) {
-                btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-              }
-            });
-            
-            // 添加active样式到当前按钮
-            this.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
-            this.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-            
-            const filterText = this.textContent.trim();
-            
-            // 筛选导师
-            instructorItems.forEach(item => {
-              if (filterText === '全部导师') {
-                item.style.display = 'block';
-                setTimeout(() => {
-                  item.style.opacity = '1';
-                  item.style.transform = 'translateY(0)';
-                }, 10);
-              } else {
-                const badges = item.querySelectorAll('.inline-block');
-                let hasMatch = false;
-                
-                badges.forEach(badge => {
-                  if (badge.textContent.includes(filterText)) {
-                    hasMatch = true;
-                  }
-                });
-                
-                if (hasMatch) {
-                  item.style.display = 'block';
-                  setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                  }, 10);
-                } else {
-                  item.style.opacity = '0';
-                  item.style.transform = 'translateY(20px)';
-                  setTimeout(() => {
-                    item.style.display = 'none';
-                  }, 300);
-                }
-              }
-            });
-          });
-        });
-        
-        // 导师卡片悬停效果
-        const instructorCards = document.querySelectorAll('.instructor-card');
-        instructorCards.forEach(card => {
-          card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-12px)';
-            this.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.15)';
-          });
-          
-          card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(-3px)';
-            this.style.boxShadow = '';
-          });
-        });
-        
-        // 预约咨询按钮点击事件
-        document.querySelectorAll('button:contains("预约咨询")').forEach(button => {
-          button.addEventListener('click', function() {
-            const instructorName = this.closest('.instructor-card').querySelector('h3').textContent;
-            alert(`即将为您预约 ${instructorName} 的咨询服务，请填写预约表单。`);
-            // 滚动到预约表单区域
-            document.getElementById('instructors-consultation-root').scrollIntoView({ behavior: 'smooth' });
-          });
-        });
-        
-        // 查看详情按钮点击事件
-        document.querySelectorAll('button:contains("查看详情")').forEach(button => {
-          button.addEventListener('click', function() {
-            const instructorName = this.closest('.bg-white').querySelector('h4').textContent;
-            alert(`即将显示 ${instructorName} 的详细资料页面。`);
-            // 实际应用中这里应该跳转到导师详情页面
-          });
-        });
-        
-        // 提交预约申请按钮
-        const submitBtn = document.querySelector('button:contains("提交预约申请")');
-        if (submitBtn) {
-          submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 简单表单验证
-            const nameInput = document.querySelector('input[placeholder="您的姓名"]');
-            const emailInput = document.querySelector('input[type="email"]');
-            const fieldSelect = document.querySelector('select:first-of-type');
-            const durationSelect = document.querySelector('select:last-of-type');
-            const descriptionTextarea = document.querySelector('textarea');
-            
-            if (!nameInput.value || !emailInput.value || !fieldSelect.value || !durationSelect.value || !descriptionTextarea.value) {
-              alert('请填写所有必填字段！');
-              return;
-            }
-            
-            // 模拟提交
-            this.innerHTML = '<span class="flex items-center justify-center"><iconify-icon icon="heroicons:arrow-path" class="animate-spin mr-2"></iconify-icon>提交中...</span>';
-            this.disabled = true;
-            
-            setTimeout(() => {
-              alert('预约申请已提交！我们的顾问将在24小时内与您联系确认预约详情。');
-              this.innerHTML = '提交预约申请';
-              this.disabled = false;
-              
-              // 清空表单
-              nameInput.value = '';
-              emailInput.value = '';
-              fieldSelect.selectedIndex = 0;
-              durationSelect.selectedIndex = 0;
-              descriptionTextarea.value = '';
-            }, 2000);
-          });
-        }
-        
-        // 导航栏滚动效果
-        const header = document.getElementById('instructors-header-root');
-        window.addEventListener('scroll', function() {
-          if (window.pageYOffset > 100) {
-            header.classList.add('shadow-lg', 'py-3');
-            header.classList.remove('py-4');
-          } else {
-            header.classList.remove('shadow-lg', 'py-3');
-            header.classList.add('py-4');
-          }
-        });
-        
-        // 平滑滚动到导师列表
-        const viewAllBtn = document.querySelector('a[href="#instructors-list"]');
-        if (viewAllBtn) {
-          viewAllBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('instructors-list-root').scrollIntoView({ behavior: 'smooth' });
-          });
-        }
-      });
-     })();</script>
-    <script type="module" src="js/index-settings.js"></script>
-</body></html>
+    </div>
+  </footer>
+</body>
+</html>
