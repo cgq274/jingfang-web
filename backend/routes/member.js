@@ -77,14 +77,102 @@ async function initMemberTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
     console.log("✓ course_completions 表就绪");
+
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS user_memberships (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        plan_code VARCHAR(32) NOT NULL DEFAULT 'annual',
+        started_at DATETIME NOT NULL,
+        expires_at DATETIME NOT NULL,
+        status ENUM('active','expired','cancelled') NOT NULL DEFAULT 'active',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_user (user_id),
+        INDEX idx_status (status),
+        INDEX idx_expire (expires_at)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+    console.log("✓ user_memberships 表就绪");
+
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS membership_orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        plan_code VARCHAR(32) NOT NULL,
+        amount DECIMAL(10,2) NOT NULL,
+        currency VARCHAR(10) DEFAULT 'CNY',
+        status ENUM('pending','paid','failed','refunded') DEFAULT 'pending',
+        payment_method VARCHAR(32) NULL,
+        payment_id VARCHAR(255) NULL,
+        paid_at TIMESTAMP NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_user (user_id),
+        INDEX idx_status (status)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+    console.log("✓ membership_orders 表就绪");
   } catch (err) {
     console.error("初始化 member 表失败:", err.message);
   }
 }
 initMemberTables();
 
-// 获取当前用户已加入的课程 ID 列表（供 video 等使用）
+async function getActiveMembership(userId) {
+  const [rows] = await pool.execute(
+    `SELECT id, plan_code AS planCode, started_at AS startedAt, expires_at AS expiresAt
+     FROM user_memberships
+     WHERE user_id = ?
+       AND status = 'active'
+       AND started_at <= NOW()
+       AND expires_at >= NOW()
+     ORDER BY expires_at DESC
+     LIMIT 1`,
+    [userId]
+  );
+  return rows[0] || null;
+}
+
+function getMembershipPlanMeta(planCode) {
+  const plan = String(planCode || "").toLowerCase();
+  if (plan === "monthly") return { planCode: "monthly", months: 1, amount: 199 };
+  if (plan === "quarterly") return { planCode: "quarterly", months: 3, amount: 499 };
+  return { planCode: "annual", months: 12, amount: 1000 };
+}
+
+async function activateMembershipForUser(userId, planCode) {
+  const plan = getMembershipPlanMeta(planCode);
+  const [rows] = await pool.execute(
+    `SELECT expires_at AS expiresAt
+     FROM user_memberships
+     WHERE user_id = ?
+       AND status = 'active'
+     ORDER BY expires_at DESC
+     LIMIT 1`,
+    [userId]
+  );
+  const hasFutureMembership =
+    rows.length > 0 && rows[0].expiresAt && new Date(rows[0].expiresAt).getTime() > Date.now();
+  const baseExpr = hasFutureMembership ? "?" : "NOW()";
+  const baseArgs = hasFutureMembership ? [rows[0].expiresAt] : [];
+  await pool.execute(
+    `INSERT INTO user_memberships (user_id, plan_code, started_at, expires_at, status)
+     VALUES (?, ?, ${baseExpr}, DATE_ADD(${baseExpr}, INTERVAL ? MONTH), 'active')`,
+    [userId, plan.planCode, ...baseArgs, ...baseArgs, plan.months]
+  );
+  return plan;
+}
+
+// 获取当前用户可学习的课程 ID 列表（会员可学习全部已上架课程；普通学员仅已购买/已加入）
 async function getEnrolledCourseIds(userId) {
+  const activeMembership = await getActiveMembership(userId);
+  if (activeMembership) {
+    const [rows] = await pool.execute(
+      "SELECT id AS course_id FROM courses WHERE status IN ('published','free')"
+    );
+    return (rows || []).map((r) => r.course_id);
+  }
   const [rows] = await pool.execute(
     "SELECT course_id FROM user_courses WHERE user_id = ?",
     [userId]
@@ -92,10 +180,21 @@ async function getEnrolledCourseIds(userId) {
   return (rows || []).map((r) => r.course_id);
 }
 
-// 我的课程列表（含每门课的学习进度）
+// 我的课程列表（会员可查看全部已上架课程；普通学员仅看已拥有课程，含学习进度）
 router.get("/member/courses", authMiddleware, requireMember, async (req, res) => {
   try {
     const userId = req.user.id;
+    const activeMembership = await getActiveMembership(userId);
+    const hasMembership = !!activeMembership;
+    const baseFrom = hasMembership
+      ? `FROM courses c
+         LEFT JOIN user_courses uc ON uc.course_id = c.id AND uc.user_id = ?`
+      : `FROM user_courses uc
+         JOIN courses c ON c.id = uc.course_id`;
+    const baseWhere = hasMembership
+      ? `WHERE c.status IN ('published','free')`
+      : `WHERE uc.user_id = ?`;
+    const params = hasMembership ? [userId, userId, userId] : [userId, userId, userId, userId];
     const [rows] = await pool.execute(
       `SELECT 
          c.id,
@@ -105,7 +204,7 @@ router.get("/member/courses", authMiddleware, requireMember, async (req, res) =>
          c.status,
          c.cover_url AS coverUrl,
          c.description,
-         uc.source,
+         COALESCE(uc.source, ${hasMembership ? "'membership'" : "'free'"}) AS source,
          uc.created_at AS enrolledAt,
          (SELECT COUNT(*) FROM videos v WHERE v.course IS NOT NULL AND v.course <> '' AND v.course = c.title AND v.status = 'published') AS videoCount,
          (SELECT COUNT(*) FROM video_progress vp
@@ -114,11 +213,10 @@ router.get("/member/courses", authMiddleware, requireMember, async (req, res) =>
          (SELECT IFNULL(SUM(vp2.watched_seconds), 0) FROM video_progress vp2
           JOIN videos v2 ON v2.id = vp2.video_id AND v2.course = c.title AND v2.status = 'published'
           WHERE vp2.user_id = ?) AS watchedSeconds
-       FROM user_courses uc
-       JOIN courses c ON c.id = uc.course_id
-       WHERE uc.user_id = ?
-       ORDER BY uc.created_at DESC`,
-      [userId, userId, userId]
+       ${baseFrom}
+       ${baseWhere}
+       ORDER BY ${hasMembership ? "c.created_at DESC" : "uc.created_at DESC"}`,
+      params
     );
     const items = (rows || []).map((r) => {
       const videoCount = Number(r.videoCount) || 0;
@@ -133,7 +231,16 @@ router.get("/member/courses", authMiddleware, requireMember, async (req, res) =>
         completed: videoCount > 0 && completedCount >= videoCount,
       };
     });
-    res.json({ items });
+    res.json({
+      items,
+      membership: hasMembership
+        ? {
+            active: true,
+            planCode: activeMembership.planCode,
+            expiresAt: activeMembership.expiresAt,
+          }
+        : { active: false },
+    });
   } catch (err) {
     console.error("获取我的课程失败:", err);
     res.status(500).json({ message: "获取我的课程失败" });
@@ -182,7 +289,7 @@ router.post("/member/courses/:courseId/enroll", authMiddleware, requireMember, a
   }
 });
 
-// 检查用户是否已拥有某课程
+// 检查用户是否已拥有某课程（已开通会员 -> 全部已上架课程均拥有）
 router.get("/member/courses/:courseId/owned", authMiddleware, requireMember, async (req, res) => {
   const userId = req.user.id;
   const courseId = parseInt(req.params.courseId, 10);
@@ -190,17 +297,25 @@ router.get("/member/courses/:courseId/owned", authMiddleware, requireMember, asy
     return res.json({ owned: false });
   }
   try {
+    const activeMembership = await getActiveMembership(userId);
+    if (activeMembership) {
+      const [courseRows] = await pool.execute(
+        "SELECT 1 FROM courses WHERE id = ? AND status IN ('published','free')",
+        [courseId]
+      );
+      return res.json({ owned: courseRows.length > 0, byMembership: true });
+    }
     const [rows] = await pool.execute(
       "SELECT 1 FROM user_courses WHERE user_id = ? AND course_id = ?",
       [userId, courseId]
     );
-    res.json({ owned: rows.length > 0 });
+    res.json({ owned: rows.length > 0, byMembership: false });
   } catch (err) {
     res.json({ owned: false });
   }
 });
 
-// 获取指定课程下的可观看视频（仅限已加入/已购买该课程的用户，含学习进度）
+// 获取指定课程下的可观看视频（会员可观看全部已上架课程；普通学员仅已拥有课程）
 router.get("/member/courses/:courseId/videos", authMiddleware, requireMember, async (req, res) => {
   const userId = req.user.id;
   const courseId = parseInt(req.params.courseId, 10);
@@ -208,15 +323,18 @@ router.get("/member/courses/:courseId/videos", authMiddleware, requireMember, as
     return res.status(400).json({ message: "课程 ID 无效" });
   }
   try {
-    const [enrolled] = await pool.execute(
-      "SELECT 1 FROM user_courses WHERE user_id = ? AND course_id = ?",
-      [userId, courseId]
-    );
-    if (!enrolled.length) {
-      return res.status(403).json({ message: "您尚未加入该课程，无法观看视频" });
+    const activeMembership = await getActiveMembership(userId);
+    if (!activeMembership) {
+      const [ownedRows] = await pool.execute(
+        "SELECT 1 FROM user_courses WHERE user_id = ? AND course_id = ?",
+        [userId, courseId]
+      );
+      if (!ownedRows.length) {
+        return res.status(403).json({ message: "您尚未购买该课程或开通会员，无法观看视频" });
+      }
     }
     const [courseRows] = await pool.execute(
-      "SELECT id, title, cover_url AS coverUrl FROM courses WHERE id = ?",
+      "SELECT id, title, cover_url AS coverUrl FROM courses WHERE id = ? AND status IN ('published','free')",
       [courseId]
     );
     if (!courseRows.length) {
@@ -287,13 +405,21 @@ router.put("/member/progress", authMiddleware, requireMember, async (req, res) =
   const completed = totalSeconds > 0 && seconds >= totalSeconds * PROGRESS_COMPLETE_THRESHOLD;
 
   try {
-    const [enrolled] = await pool.execute(
-      "SELECT 1 FROM user_courses WHERE user_id = ? AND course_id = ?",
-      [userId, cid]
-    );
-    if (!enrolled.length) {
-      return res.status(403).json({ message: "您尚未加入该课程" });
+    const activeMembership = await getActiveMembership(userId);
+    if (!activeMembership) {
+      const [ownedRows] = await pool.execute(
+        "SELECT 1 FROM user_courses WHERE user_id = ? AND course_id = ?",
+        [userId, cid]
+      );
+      if (!ownedRows.length) {
+        return res.status(403).json({ message: "您尚未购买该课程或开通会员" });
+      }
     }
+    const [courseRows] = await pool.execute(
+      "SELECT id FROM courses WHERE id = ? AND status IN ('published','free')",
+      [cid]
+    );
+    if (!courseRows.length) return res.status(404).json({ message: "课程不存在或已下架" });
     const [videoRow] = await pool.execute(
       "SELECT id FROM videos WHERE id = ? AND status = 'published'",
       [vid]
@@ -351,14 +477,18 @@ router.put("/member/progress", authMiddleware, requireMember, async (req, res) =
 router.get("/member/stats", authMiddleware, requireMember, async (req, res) => {
   const userId = req.user.id;
   try {
+    const activeMembership = await getActiveMembership(userId);
+    const hasMembership = !!activeMembership;
+    const fromSql = hasMembership
+      ? "FROM courses c WHERE c.status IN ('published','free')"
+      : "FROM user_courses uc JOIN courses c ON c.id = uc.course_id WHERE uc.user_id = ?";
+    const params = hasMembership ? [userId] : [userId, userId];
     const [coursesRows] = await pool.execute(
       `SELECT c.id, c.title,
          (SELECT COUNT(*) FROM videos v WHERE v.course = c.title AND v.status = 'published') AS videoCount,
          (SELECT COUNT(*) FROM video_progress vp JOIN videos v ON v.id = vp.video_id AND v.course = c.title AND v.status = 'published' WHERE vp.user_id = ? AND vp.completed = 1) AS completedCount
-       FROM user_courses uc
-       JOIN courses c ON c.id = uc.course_id
-       WHERE uc.user_id = ?`,
-      [userId, userId]
+       ${fromSql}`,
+      params
     );
     let totalVideos = 0;
     let completedVideos = 0;
@@ -525,6 +655,85 @@ router.post("/member/orders/:orderId/confirm-mock", authMiddleware, requireMembe
   } catch (err) {
     console.error("模拟支付确认失败:", err);
     res.status(500).json({ message: "支付确认失败" });
+  }
+});
+
+// 创建会员订单（年度/月度/季度）
+router.post("/member/memberships/orders", authMiddleware, requireMember, async (req, res) => {
+  const userId = req.user.id;
+  const plan = getMembershipPlanMeta(req.body?.planCode);
+  try {
+    const [result] = await pool.execute(
+      "INSERT INTO membership_orders (user_id, plan_code, amount, currency, status) VALUES (?, ?, ?, 'CNY', 'pending')",
+      [userId, plan.planCode, plan.amount]
+    );
+    res.status(201).json({
+      orderId: result.insertId,
+      planCode: plan.planCode,
+      amount: plan.amount,
+      currency: "CNY",
+      status: "pending",
+    });
+  } catch (err) {
+    console.error("创建会员订单失败:", err);
+    res.status(500).json({ message: "创建会员订单失败" });
+  }
+});
+
+// 查询会员订单
+router.get("/member/memberships/orders/:orderId", authMiddleware, requireMember, async (req, res) => {
+  const userId = req.user.id;
+  const orderId = parseInt(req.params.orderId, 10);
+  if (!orderId) return res.status(400).json({ message: "订单 ID 无效" });
+  try {
+    const [rows] = await pool.execute(
+      `SELECT id AS orderId, user_id, plan_code AS planCode, amount, currency, status,
+              payment_method AS paymentMethod, paid_at AS paidAt, created_at AS createdAt
+       FROM membership_orders
+       WHERE id = ? AND user_id = ?`,
+      [orderId, userId]
+    );
+    if (!rows.length) return res.status(404).json({ message: "订单不存在" });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error("查询会员订单失败:", err);
+    res.status(500).json({ message: "查询会员订单失败" });
+  }
+});
+
+// 会员模拟支付确认（开发/演示用）
+router.post("/member/memberships/orders/:orderId/confirm-mock", authMiddleware, requireMember, async (req, res) => {
+  const userId = req.user.id;
+  const orderId = parseInt(req.params.orderId, 10);
+  if (!orderId) return res.status(400).json({ message: "订单 ID 无效" });
+  try {
+    const [rows] = await pool.execute(
+      "SELECT id, user_id, plan_code AS planCode, status FROM membership_orders WHERE id = ? AND user_id = ?",
+      [orderId, userId]
+    );
+    if (!rows.length) return res.status(404).json({ message: "订单不存在" });
+    const order = rows[0];
+    if (order.status === "paid") {
+      const active = await getActiveMembership(userId);
+      return res.json({ message: "订单已支付", status: "paid", membership: active || { active: true } });
+    }
+    if (order.status !== "pending") return res.status(400).json({ message: "订单状态不允许支付" });
+
+    await pool.execute(
+      "UPDATE membership_orders SET status = 'paid', payment_method = 'mock', paid_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [orderId]
+    );
+    const plan = await activateMembershipForUser(userId, order.planCode);
+    const active = await getActiveMembership(userId);
+    res.json({
+      message: "会员开通成功",
+      status: "paid",
+      planCode: plan.planCode,
+      membership: active ? { active: true, planCode: active.planCode, expiresAt: active.expiresAt } : { active: true },
+    });
+  } catch (err) {
+    console.error("会员模拟支付确认失败:", err);
+    res.status(500).json({ message: "会员支付确认失败" });
   }
 });
 

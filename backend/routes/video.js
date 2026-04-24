@@ -206,15 +206,37 @@ router.get("/videos", authMiddleware, async (req, res) => {
   }
 });
 
-// 学员端：获取当前用户可观看的视频列表（仅限已加入/已购买课程下的视频）
+// 学员端：获取当前用户可观看的视频列表（会员可观看全部已上架课程下的视频）
 router.get("/member/videos", authMiddleware, async (req, res) => {
   try {
+    if (!req.user || req.user.role !== "member") {
+      return res.status(403).json({ message: "仅学员账号可访问" });
+    }
     const userId = req.user.id;
-    const [enrolled] = await pool.execute(
-      "SELECT c.title FROM user_courses uc JOIN courses c ON c.id = uc.course_id WHERE uc.user_id = ?",
+    const [membershipRows] = await pool.execute(
+      `SELECT 1
+       FROM user_memberships
+       WHERE user_id = ?
+         AND status = 'active'
+         AND started_at <= NOW()
+         AND expires_at >= NOW()
+       LIMIT 1`,
       [userId]
     );
-    const courseTitles = (enrolled || []).map((r) => r.title).filter(Boolean);
+    const hasMembership = membershipRows.length > 0;
+    let courseTitles = [];
+    if (hasMembership) {
+      const [courseRows] = await pool.execute(
+        "SELECT title FROM courses WHERE status IN ('published','free')"
+      );
+      courseTitles = (courseRows || []).map((r) => r.title).filter(Boolean);
+    } else {
+      const [ownedRows] = await pool.execute(
+        "SELECT c.title FROM user_courses uc JOIN courses c ON c.id = uc.course_id WHERE uc.user_id = ?",
+        [userId]
+      );
+      courseTitles = (ownedRows || []).map((r) => r.title).filter(Boolean);
+    }
     if (courseTitles.length === 0) {
       return res.json({ items: [] });
     }

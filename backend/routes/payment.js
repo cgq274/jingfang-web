@@ -70,6 +70,50 @@ router.post("/payment/alipay/create", authMiddleware, async (req, res) => {
   }
 });
 
+/** 创建会员微信 Native 支付（返回 code_url） */
+router.post("/payment/wechat/create-membership", authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+  const orderId = parseInt(req.body.orderId, 10);
+  if (!orderId) return res.status(400).json({ message: "订单 ID 无效" });
+  try {
+    const [rows] = await pool.execute(
+      "SELECT id, user_id, plan_code, amount, status FROM membership_orders WHERE id = ? AND user_id = ?",
+      [orderId, userId]
+    );
+    if (!rows.length) return res.status(404).json({ message: "会员订单不存在" });
+    const order = rows[0];
+    if (order.status !== "pending") return res.status(400).json({ message: "订单状态不允许支付" });
+    const description = `会员订单-${orderId}-${order.plan_code}`;
+    const { codeUrl } = await paymentService.createWechatNativePay(order, description, "membership");
+    res.json({ codeUrl, orderId });
+  } catch (err) {
+    console.error("会员微信下单失败:", err);
+    res.status(500).json({ message: err.message || "会员微信支付下单失败" });
+  }
+});
+
+/** 创建会员支付宝支付（返回支付链接） */
+router.post("/payment/alipay/create-membership", authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+  const orderId = parseInt(req.body.orderId, 10);
+  if (!orderId) return res.status(400).json({ message: "订单 ID 无效" });
+  try {
+    const [rows] = await pool.execute(
+      "SELECT id, user_id, plan_code, amount, status FROM membership_orders WHERE id = ? AND user_id = ?",
+      [orderId, userId]
+    );
+    if (!rows.length) return res.status(404).json({ message: "会员订单不存在" });
+    const order = rows[0];
+    if (order.status !== "pending") return res.status(400).json({ message: "订单状态不允许支付" });
+    const subject = `会员订单-${orderId}-${order.plan_code}`;
+    const { payUrl } = await paymentService.createAlipayPagePay(order, subject, "membership");
+    res.json({ payUrl, orderId });
+  } catch (err) {
+    console.error("会员支付宝下单失败:", err.message);
+    res.status(500).json({ message: err.message || "会员支付宝下单失败" });
+  }
+});
+
 /** 支付方式是否可用（供前端隐藏/展示按钮） */
 router.get("/payment/status", authMiddleware, (req, res) => {
   res.json({

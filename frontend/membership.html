@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><title></title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 会员方案</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body><style id="membership-styles-root" type="text/tailwindcss">
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 年度会员服务合同</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body><style id="membership-styles-root" type="text/tailwindcss">
       @layer utilities {
         .membership-card {
           @apply transition-all duration-500 hover:-translate-y-4;
@@ -50,7 +50,7 @@
             <a href="member.html" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg">
               进入学习中心
             </a>
-            <button class="md:hidden">
+            <button class="md:hidden" title="打开导航菜单" aria-label="打开导航菜单">
               <iconify-icon icon="heroicons:bars-3" class="text-2xl text-gray-700"></iconify-icon>
             </button>
           </div>
@@ -59,396 +59,111 @@
     </header>
  
     
-    <section id="membership-hero-root" class="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 md:py-24">
+    <section id="membership-hero-root" class="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 md:py-20">
       <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto text-center">
-          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            尊享<span class="text-blue-600">会员方案</span>
-          </h1>
-          <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-            选择适合您的会员等级，享受专属优惠、优先服务和更多学习资源，加速您的金融职业发展
-          </p>
-          
-          <div class="flex items-center justify-center space-x-4 mb-12">
-            <span class="text-gray-700 font-medium">计费周期：</span>
-            <div class="bg-white rounded-full p-1 shadow-inner">
-              <button class="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full">月度</button>
-              <button class="px-6 py-2 text-gray-700 font-medium rounded-full hover:bg-gray-100">年度</button>
-            </div>
-            <span class="text-green-600 font-bold">年度订阅节省 20%</span>
+        <div class="max-w-5xl mx-auto">
+          <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              年度会员<span class="text-blue-600">权益方案</span>
+            </h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+              以系统化投资知识学习为核心，覆盖课程、资料与社群答疑，帮助你建立完整认知框架与风险意识。
+            </p>
           </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            <div class="text-center">
-              <div class="text-3xl font-bold text-blue-600 mb-2">3,000+</div>
-              <div class="text-gray-700">会员学员</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-blue-600 mb-2">95%</div>
-              <div class="text-gray-700">续费率</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-blue-600 mb-2">4.9/5</div>
-              <div class="text-gray-700">会员满意度</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="absolute top-10 left-10 w-64 h-64 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-full opacity-20 blur-3xl"></div>
-      <div class="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-full opacity-20 blur-3xl"></div>
-    </section>
 
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">全站会员课程</h3>
+              <p class="text-gray-600 text-sm">有效期内观看平台标注会员可看的课程视频，支持持续学习与复盘。</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">学习资料与更新</h3>
+              <p class="text-gray-600 text-sm">配套学习资料与内容更新同步提供，便于建立自己的学习体系。</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">社群知识答疑</h3>
+              <p class="text-gray-600 text-sm">仅限知识点、概念、框架、工具解释，不涉及个股与交易建议。</p>
+            </div>
+          </div>
 
-    <section id="membership-plans-root" class="py-16 bg-white">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">选择您的<span class="text-blue-600">会员等级</span></h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">从基础学习到全方位服务，我们提供不同等级的会员方案满足您的需求</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <!-- 基础会员 -->
-          <div class="membership-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-            <div class="p-8">
-              <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">基础会员</h3>
-                <p class="text-gray-600">适合初学者和自学者</p>
+          <div class="bg-white rounded-3xl shadow-xl border border-blue-100 p-6 md:p-8 space-y-5">
+            <div class="flex items-end justify-between gap-4 flex-wrap">
+              <div>
+                <p class="text-sm text-gray-500">年度会员费</p>
+                <p class="text-4xl font-bold text-gray-900">¥1000<span class="text-base text-gray-500 font-medium"> / 年</span></p>
+                <p class="text-xs text-gray-500 mt-1">价格可在 ¥1000-¥1500 区间内调整，以支付页展示为准</p>
               </div>
-              
-              <div class="text-center mb-8">
-                <div class="text-5xl font-bold text-gray-900 mb-2">¥299</div>
-                <div class="text-gray-600">/月</div>
-                <div class="text-sm text-gray-500 mt-2">按年订阅 ¥2,868/年</div>
-              </div>
-              
-              <div class="space-y-4 mb-8">
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>100+ 门基础课程</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>每月2次直播课</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>基础学习资料下载</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>社区论坛访问</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:x-circle" class="text-gray-400 text-xl"></iconify-icon>
-                  <span class="text-gray-400">一对一导师咨询</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:x-circle" class="text-gray-400 text-xl"></iconify-icon>
-                  <span class="text-gray-400">专属作业批改</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:x-circle" class="text-gray-400 text-xl"></iconify-icon>
-                  <span class="text-gray-400">职业规划指导</span>
-                </div>
-              </div>
-              
-              <button class="w-full py-3 border-2 border-blue-600 text-blue-600 font-bold rounded-full hover:bg-blue-50 transition-colors duration-300">
-                选择基础会员
+              <button type="button" id="open-membership-pay-modal" class="px-7 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-indigo-700">
+                去开通会员
               </button>
             </div>
-          </div>
-          
-          <!-- 专业会员（推荐） -->
-          <div class="membership-card popular bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-blue-500">
-            <div class="popular-badge">最受欢迎</div>
-            <div class="p-8 pt-12">
-              <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">专业会员</h3>
-                <p class="text-gray-600">适合职业发展者</p>
-              </div>
-              
-              <div class="text-center mb-8">
-                <div class="text-5xl font-bold text-gray-900 mb-2">¥699</div>
-                <div class="text-gray-600">/月</div>
-                <div class="text-sm text-gray-500 mt-2">按年订阅 ¥6,708/年</div>
-              </div>
-              
-              <div class="space-y-4 mb-8">
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>300+ 门专业课程<!--
-<span-->300+ 门专业课程</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>每周4次直播课</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>高级学习资料下载</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>专属学习社群</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>每月2次导师咨询</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>作业批改服务</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>职业规划指导</span>
-                </div>
-              </div>
-              
-              <button class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg">
-                选择专业会员
-              </button>
+
+            <div class="border-2 border-red-200 bg-red-50 rounded-xl p-5 text-gray-700 leading-7">
+              <h3 class="text-lg font-bold text-red-700 mb-2">重要合规声明</h3>
+              <p>会员服务仅为金融知识教育内容，不构成投资建议，不荐股、不指导交易、不承诺收益。</p>
+              <p>平台及讲师不具备证券投资咨询资质，所有投资决策由用户独立判断、风险自担、盈亏自负。</p>
             </div>
-          </div>
-          
-          <!-- 企业会员 -->
-          <div class="membership-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-            <div class="p-8">
-              <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">企业会员</h3>
-                <p class="text-gray-600">适合团队和企业培训</p>
-              </div>
-              
-              <div class="text-center mb-8">
-                <div class="text-5xl font-bold text-gray-900 mb-2">定制</div>
-                <div class="text-gray-600">根据需求定价</div>
-                <div class="text-sm text-gray-500 mt-2">联系销售获取报价</div>
-              </div>
-              
-              <div class="space-y-4 mb-8">
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>500+ 门全站课程</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>定制化直播课程</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>企业专属学习平台</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>团队学习管理</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>专属客户经理</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>培训效果分析报告</span>
-                </div>
-                <div class="feature-item">
-                  <iconify-icon icon="heroicons:check-circle" class="text-green-500 text-xl"></iconify-icon>
-                  <span>企业内训定制</span>
-                </div>
-              </div>
-              
-              <button class="w-full py-3 border-2 border-blue-600 text-blue-600 font-bold rounded-full hover:bg-blue-50 transition-colors duration-300">
-                联系销售
-              </button>
+
+            <div class="border border-gray-200 rounded-xl p-5 text-gray-700 leading-7">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">会员服务协议（简版）</h3>
+              <p>1．本会员服务为在线知识付费产品，包含课程视频观看、学习资料、社群文字答疑。</p>
+              <p>2．服务内容为金融投资知识教学，不提供投资建议、不荐股、不指导交易、不承诺收益。</p>
+              <p>3．会员有效期内可观看平台标注为会员可看的所有课程。</p>
+              <p>4．课程内容仅供学习，不构成投资依据，投资风险由用户自行承担。</p>
+              <p>5．虚拟知识产品一经交付，非课程质量问题不予退费。</p>
+              <p>6．用户不得将账号转借、售卖，违者封号处理。</p>
+              <p>7．本平台保留最终解释权。</p>
             </div>
+
+            <p class="text-sm text-gray-600">
+              完整合同请在支付前查阅：
+              <a href="membership-contract.html" class="text-blue-600 hover:text-blue-800 font-medium">《年度会员服务合同》</a>
+            </p>
           </div>
-        </div>
-        
-        <div class="text-center mt-12">
-          <p class="text-gray-600">所有会员方案均包含：7天无理由退款保证 • 多设备同步学习 • 学习进度跟踪</p>
         </div>
       </div>
     </section>
 
-
-    <section id="membership-benefits-root" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">会员<span class="text-blue-600">专属福利</span></h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">加入敬方教育会员，享受全方位的学习和职业发展支持</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <!-- 福利 1 -->
-          <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300">
-            <div class="w-20 h-20 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center mx-auto mb-6">
-              <iconify-icon icon="heroicons:academic-cap" class="text-3xl text-blue-600"></iconify-icon>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4">独家课程资源</h3>
-            <p class="text-gray-600">会员专享的高级课程和实战案例，涵盖前沿金融知识和实践技能</p>
-          </div>
-          
-          <!-- 福利 2 -->
-          <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300">
-            <div class="w-20 h-20 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 flex items-center justify-center mx-auto mb-6">
-              <iconify-icon icon="heroicons:user-group" class="text-3xl text-green-600"></iconify-icon>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4">导师一对一指导</h3>
-            <p class="text-gray-600">定期与行业专家面对面交流，获得个性化学习建议和职业规划指导</p>
-          </div>
-          
-          <!-- 福利 3 -->
-          <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300">
-            <div class="w-20 h-20 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center mx-auto mb-6">
-              <iconify-icon icon="heroicons:briefcase" class="text-3xl text-purple-600"></iconify-icon>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4">职业发展支持</h3>
-            <p class="text-gray-600">内推机会、简历优化、面试辅导，助力您在金融行业获得理想职位</p>
-          </div>
-          
-          <!-- 福利 4 -->
-          <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300">
-            <div class="w-20 h-20 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 flex items-center justify-center mx-auto mb-6">
-              <iconify-icon icon="heroicons:gift" class="text-3xl text-amber-600"></iconify-icon>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4">会员专属优惠</h3>
-            <p class="text-gray-600">课程折扣、活动优先参与、合作伙伴特权等持续更新的会员福利</p>
-          </div>
-        </div>
-        
-        <div class="mt-16 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 md:p-12 text-white">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 class="text-2xl font-bold mb-4">限时优惠：年度会员<span class="text-yellow-300">立减20%</span></h3>
-              <p class="opacity-90 mb-6">现在订阅年度会员，立即享受大幅折扣，并获得额外3个月免费使用期！</p>
-              <div class="flex items-center space-x-4">
-                <div class="text-4xl font-bold">¥6,708</div>
-                <div class="text-lg">
-                  <div class="line-through opacity-70">¥8,388</div>
-                  <div class="text-green-300 font-bold">节省 ¥1,680</div>
-                </div>
-              </div>
-            </div>
-            <div class="text-center lg:text-right">
-              <div class="mb-6">
-                <div class="text-sm opacity-90 mb-2">优惠截止时间</div>
-                <div class="text-2xl font-bold flex items-center justify-center lg:justify-end space-x-2">
-                  <span class="bg-white/20 px-3 py-1 rounded">03</span>
-                  <span>:</span>
-                  <span class="bg-white/20 px-3 py-1 rounded">18</span>
-                  <span>:</span>
-                  <span class="bg-white/20 px-3 py-1 rounded">42</span>
-                </div>
-              </div>
-              <button class="px-8 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-gray-900 font-bold rounded-full hover:from-yellow-500 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-                立即订阅年度会员
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
- 
-    
-    <section id="membership-comparison-root" class="py-16 bg-white">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">会员方案<span class="text-blue-600">详细对比</span></h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">清晰了解不同会员等级的功能差异，选择最适合您的方案</p>
-        </div>
-        
-        <div class="overflow-x-auto">
-          <table class="comparison-table w-full bg-white rounded-xl shadow-lg">
-            <thead>
-              <tr>
-                <th class="text-left">功能特性</th>
-                <th class="text-center">基础会员</th>
-                <th class="text-center">专业会员</th>
-                <th class="text-center">企业会员</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="font-medium">课程访问权限</td>
-                <td class="text-center">100+ 基础课程</td>
-                <td class="text-center">300+ 全站课程</td>
-                <td class="text-center">500+ 全站课程</td>
-              </tr>
-              <tr>
-                <td class="font-medium">直播课程</td>
-                <td class="text-center">每月2次</td>
-                <td class="text-center">每周4次</td>
-                <td class="text-center">定制化安排</td>
-              </tr>
-              <tr>
-                <td class="font-medium">导师一对一咨询</td>
-                <td class="text-center text-gray-400">-</td>
-                <td class="text-center">每月2次</td>
-                <td class="text-center">无限次</td>
-              </tr>
-              <tr>
-                <td class="font-medium">作业批改服务</td>
-                <td class="text-center text-gray-400">-</td>
-                <td class="text-center">√ 包含</td>
-                <td class="text-center">√ 优先处理</td>
-              </tr>
-              <tr>
-                <td class="font-medium">职业规划指导</td>
-                <td class="text-center text-gray-400">-</td>
-                <td class="text-center">√ 包含</td>
-                <td class="text-center">√ 团队指导</td>
-              </tr>
-              <tr>
-                <td class="font-medium">学习社群</td>
-                <td class="text-center">基础论坛</td>
-                <td class="text-center">专属社群</td>
-                <td class="text-center">企业专属平台</td>
-              </tr>
-              <tr>
-                <td class="font-medium">学习资料下载</td>
-                <td class="text-center">基础资料</td>
-                <td class="text-center">高级资料</td>
-                <td class="text-center">全部资料</td>
-              </tr>
-              <tr>
-                <td class="font-medium">客户支持</td>
-                <td class="text-center">邮件支持</td>
-                <td class="text-center">优先支持</td>
-                <td class="text-center">专属客户经理</td>
-              </tr>
-              <tr>
-                <td class="font-medium">证书颁发</td>
-                <td class="text-center">课程证书</td>
-                <td class="text-center">专业认证</td>
-                <td class="text-center">企业认证</td>
-              </tr>
-              <tr>
-                <td class="font-medium">价格</td>
-                <td class="text-center">
-                  <div class="font-bold text-gray-900">¥299/月</div>
-                  <div class="text-sm text-gray-500">¥2,868/年</div>
-                </td>
-                <td class="text-center">
-                  <div class="font-bold text-gray-900">¥699/月</div>
-                  <div class="text-sm text-gray-500">¥6,708/年</div>
-                </td>
-                <td class="text-center">
-                  <div class="font-bold text-gray-900">定制价格</div>
-                  <div class="text-sm text-gray-500">联系销售</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <div class="mt-12 text-center">
-          <p class="text-gray-600 mb-6">不确定哪个方案适合您？我们的顾问可以为您提供个性化建议</p>
-          <button class="px-8 py-3 border-2 border-blue-600 text-blue-600 font-bold rounded-full hover:bg-blue-50 transition-colors duration-300">
-            免费咨询顾问
+    <div id="membership-pay-modal-backdrop" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm" aria-hidden="true">
+      <div id="membership-pay-modal" class="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 px-4" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 relative">
+          <button type="button" id="membership-pay-modal-close" class="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" aria-label="关闭">
+            <iconify-icon icon="heroicons:x-mark" class="text-2xl"></iconify-icon>
           </button>
+          <h2 class="text-xl font-bold text-gray-900 mb-2">支付确认</h2>
+          <p class="text-sm text-gray-600 mb-4">年度会员费：<span class="font-semibold text-gray-900">¥1000 / 年</span></p>
+
+          <div class="mb-5 p-4 rounded-xl border-2 border-amber-200 bg-amber-50">
+            <p class="font-semibold text-amber-800 mb-2">重要提示：请务必阅读并同意</p>
+            <div class="space-y-1 text-sm text-gray-700">
+              <p>1．本产品为线上知识付费虚拟商品，一经开通／观看，不支持七日无理由退货。</p>
+              <p>2．会员服务仅为投资知识教学，不构成投资建议，不荐股、不指导买卖、不承诺收益。</p>
+              <p>3．本人确认：已充分知晓投资风险，自愿购买，投资盈亏与平台无关。</p>
+              <p>4．本人承诺账号仅个人使用，不传播、不倒卖课程内容。</p>
+            </div>
+            <label for="membership-pay-agree" class="mt-3 flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+              <input type="checkbox" id="membership-pay-agree" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600">
+              <span>
+                我已阅读并同意以上内容、
+                <a href="membership-contract.html" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium">《年度会员服务合同》</a>
+                及风险声明，自愿开通并承担相应风险。
+              </span>
+            </label>
+            <p id="membership-pay-agree-tip" class="hidden mt-2 text-xs text-red-500">请先勾选同意后再继续。</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="courses.html" class="flex-1 text-center px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50">查看课程详情</a>
+            <button type="button" id="membership-pay-confirm" class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed" disabled>确认开通</button>
+          </div>
+          <div id="membership-wechat-qr-wrap" class="hidden mt-4 p-4 bg-gray-50 rounded-xl text-center">
+            <p class="text-sm text-gray-600 mb-2">请使用微信扫描二维码完成会员支付</p>
+            <div id="membership-wechat-qr-canvas" class="inline-block p-2 bg-white rounded-lg"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-3">如需正式支付对接，可在此按钮接入会员下单接口。</p>
         </div>
       </div>
-    </section>
+    </div>
 
 
     <section id="membership-faq-root" class="py-16 bg-gray-50">
@@ -460,59 +175,54 @@
           </div>
           
           <div class="space-y-6">
-            <!-- FAQ 1 -->
             <div class="bg-white rounded-xl shadow-md p-6">
               <div class="flex items-start justify-between">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">会员订阅可以随时取消吗？</h3>
-                <button class="text-blue-600">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">支付成功后，合同什么时候生效？</h3>
+                <button class="text-blue-600" title="展开问题答案" aria-label="展开问题答案">
                   <iconify-icon icon="heroicons:plus" class="text-xl"></iconify-icon>
                 </button>
               </div>
-              <p class="text-gray-600 hidden">是的，您可以随时在会员中心取消订阅。取消后，您的会员权益将持续到当前计费周期结束。我们提供7天无理由退款保证，如果您在订阅后7天内不满意，可以申请全额退款。</p>
+              <p class="text-gray-600 hidden">支付成功即视为乙方同意并签署本合同，电子订单、支付凭证、用户确认记录均作为合同有效组成部分。</p>
             </div>
             
-            <!-- FAQ 2 -->
             <div class="bg-white rounded-xl shadow-md p-6">
               <div class="flex items-start justify-between">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">年度订阅和月度订阅有什么区别？</h3>
-                <button class="text-blue-600">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">会员服务是否属于投资建议？</h3>
+                <button class="text-blue-600" title="展开问题答案" aria-label="展开问题答案">
                   <iconify-icon icon="heroicons:plus" class="text-xl"></iconify-icon>
                 </button>
               </div>
-              <p class="text-gray-600 hidden">年度订阅相比月度订阅可以节省20%的费用，并且通常包含额外的福利，如免费延长会员期限、专属礼品等。年度订阅也提供更稳定的学习计划，避免每月续费的麻烦。</p>
+              <p class="text-gray-600 hidden">不属于。会员服务是知识教育服务，不构成投资咨询、理财顾问或交易指导，不提供荐股和收益承诺。</p>
             </div>
             
-            <!-- FAQ 3 -->
             <div class="bg-white rounded-xl shadow-md p-6">
               <div class="flex items-start justify-between">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">会员可以升级或降级吗？</h3>
-                <button class="text-blue-600">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">什么情况下可以申请退费？</h3>
+                <button class="text-blue-600" title="展开问题答案" aria-label="展开问题答案">
                   <iconify-icon icon="heroicons:plus" class="text-xl"></iconify-icon>
                 </button>
               </div>
-              <p class="text-gray-600 hidden">可以随时升级会员等级，升级后将立即享受新等级的所有权益，费用按比例计算。降级将在当前计费周期结束后生效，已支付的费用不会退还。</p>
+              <p class="text-gray-600 hidden">可退费情形包括：付费后未开通且未使用服务可全额退费；因甲方原因服务中断超过7日无法修复，可按剩余有效期比例退费。</p>
             </div>
             
-            <!-- FAQ 4 -->
             <div class="bg-white rounded-xl shadow-md p-6">
               <div class="flex items-start justify-between">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">企业会员如何为团队购买？</h3>
-                <button class="text-blue-600">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">已经开通并使用后还能退费吗？</h3>
+                <button class="text-blue-600" title="展开问题答案" aria-label="展开问题答案">
                   <iconify-icon icon="heroicons:plus" class="text-xl"></iconify-icon>
                 </button>
               </div>
-              <p class="text-gray-600 hidden">企业会员需要联系我们的销售团队，根据团队规模、培训需求和预算定制方案。我们提供团队管理后台、学习进度跟踪、培训效果分析等企业专属功能。</p>
+              <p class="text-gray-600 hidden">不能。已开通、已学习、已使用社群服务的会员，不予退费。</p>
             </div>
             
-            <!-- FAQ 5 -->
             <div class="bg-white rounded-xl shadow-md p-6">
               <div class="flex items-start justify-between">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">会员权益是否包含所有课程？</h3>
-                <button class="text-blue-600">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">账号和课程内容可以共享或二次售卖吗？</h3>
+                <button class="text-blue-600" title="展开问题答案" aria-label="展开问题答案">
                   <iconify-icon icon="heroicons:plus" class="text-xl"></iconify-icon>
                 </button>
               </div>
-              <p class="text-gray-600 hidden">不同会员等级包含的课程范围不同。基础会员包含100+门基础课程，专业会员包含300+门全站课程，企业会员包含500+门全站课程。部分高级认证课程可能需要额外付费。</p>
+              <p class="text-gray-600 hidden">不可以。账号仅限本人使用，禁止转借、拼课、共享、录屏、下载搬运及二次售卖课程内容。</p>
             </div>
           </div>
           
@@ -543,16 +253,16 @@
             </div>
             <p id="footer-intro" class="text-gray-400 mb-6">专业的金融教育培训平台，致力于培养金融行业精英人才。</p>
             <div class="flex space-x-4">
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="微信" aria-label="微信" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:wechat" class="text-xl"></iconify-icon>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="LinkedIn" aria-label="LinkedIn" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="Twitter" aria-label="Twitter" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="YouTube" aria-label="YouTube" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:youtube" class="text-xl"></iconify-icon>
               </a>
             </div>
@@ -608,107 +318,9 @@
 
 
     <script type="module" src="js/index-settings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
     <script id="membership-script-root">
       document.addEventListener('DOMContentLoaded', function() {
-        // 计费周期切换
-        const monthlyBtn = document.querySelector('button:contains("月度")');
-        const yearlyBtn = document.querySelector('button:contains("年度")');
-        
-        if (monthlyBtn && yearlyBtn) {
-          monthlyBtn.addEventListener('click', function() {
-            monthlyBtn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
-            monthlyBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
-            yearlyBtn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
-            yearlyBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
-            
-            // 更新价格显示
-            updatePrices('monthly');
-          });
-          
-          yearlyBtn.addEventListener('click', function() {
-            yearlyBtn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
-            yearlyBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
-            monthlyBtn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white');
-            monthlyBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
-            
-            // 更新价格显示
-            updatePrices('yearly');
-          });
-        }
-        
-        function updatePrices(period) {
-          const basicPrice = document.querySelector('.membership-card:not(.popular) .text-5xl');
-          const proPrice = document.querySelector('.membership-card.popular .text-5xl');
-          const basicDesc = document.querySelector('.membership-card:not(.popular) .text-sm.text-gray-500');
-          const proDesc = document.querySelector('.membership-card.popular .text-sm.text-gray-500');
-          
-          if (period === 'monthly') {
-            if (basicPrice) basicPrice.textContent = '¥299';
-            if (proPrice) proPrice.textContent = '¥699';
-            if (basicDesc) basicDesc.textContent = '按年订阅 ¥2,868/年';
-            if (proDesc) proDesc.textContent = '按年订阅 ¥6,708/年';
-          } else {
-            if (basicPrice) basicPrice.textContent = '¥2,868';
-            if (proPrice) proPrice.textContent = '¥6,708';
-            if (basicDesc) basicDesc.textContent = '按月订阅 ¥299/月';
-            if (proDesc) proDesc.textContent = '按月订阅 ¥699/月';
-          }
-        }
-        
-        // 会员卡片悬停效果
-        const membershipCards = document.querySelectorAll('.membership-card');
-        membershipCards.forEach(card => {
-          card.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('popular')) {
-              this.style.transform = 'translateY(-16px)';
-              this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
-            } else {
-              this.style.transform = 'translateY(-20px)';
-              this.style.boxShadow = '0 30px 60px rgba(59, 130, 246, 0.2)';
-            }
-          });
-          
-          card.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('popular')) {
-              this.style.transform = 'translateY(-4px)';
-              this.style.boxShadow = '';
-            } else {
-              this.style.transform = 'translateY(-4px)';
-              this.style.boxShadow = '';
-            }
-          });
-        });
-        
-        // 选择会员按钮点击事件
-        document.querySelectorAll('button:contains("选择基础会员"), button:contains("选择专业会员"), button:contains("立即订阅年度会员")').forEach(button => {
-          button.addEventListener('click', function() {
-            let planName = '';
-            if (this.textContent.includes('基础会员')) planName = '基础会员';
-            else if (this.textContent.includes('专业会员')) planName = '专业会员';
-            else if (this.textContent.includes('年度会员')) planName = '专业会员（年度）';
-            
-            alert(`即将为您开通 ${planName}，请完成支付流程。`);
-            // 实际应用中这里应该跳转到支付页面
-          });
-        });
-        
-        // 联系销售按钮
-        const contactSalesBtn = document.querySelector('button:contains("联系销售")');
-        if (contactSalesBtn) {
-          contactSalesBtn.addEventListener('click', function() {
-            alert('即将为您转接销售顾问，请稍候...');
-            // 实际应用中这里应该打开联系表单或跳转到联系方式页面
-          });
-        }
-        
-        // 免费咨询顾问按钮
-        const freeConsultBtn = document.querySelector('button:contains("免费咨询顾问")');
-        if (freeConsultBtn) {
-          freeConsultBtn.addEventListener('click', function() {
-            alert('顾问将在24小时内与您联系，请保持电话畅通。');
-          });
-        }
-        
         // FAQ展开/收起功能
         const faqButtons = document.querySelectorAll('#membership-faq-root button');
         faqButtons.forEach(button => {
@@ -725,38 +337,150 @@
             }
           });
         });
-        
-        // 倒计时功能
-        function updateCountdown() {
-          const countdownElements = document.querySelectorAll('.bg-white\\/20');
-          if (countdownElements.length === 3) {
-            let hours = parseInt(countdownElements[0].textContent);
-            let minutes = parseInt(countdownElements[1].textContent);
-            let seconds = parseInt(countdownElements[2].textContent);
-            
-            seconds--;
-            if (seconds < 0) {
-              seconds = 59;
-              minutes--;
-              if (minutes < 0) {
-                minutes = 59;
-                hours--;
-                if (hours < 0) {
-                  hours = 0;
-                  minutes = 0;
-                  seconds = 0;
-                }
-              }
-            }
-            
-            countdownElements[0].textContent = hours.toString().padStart(2, '0');
-            countdownElements[1].textContent = minutes.toString().padStart(2, '0');
-            countdownElements[2].textContent = seconds.toString().padStart(2, '0');
-          }
+
+        // 会员支付确认弹窗
+        const payModalBackdrop = document.getElementById('membership-pay-modal-backdrop');
+        const openPayModalBtn = document.getElementById('open-membership-pay-modal');
+        const closePayModalBtn = document.getElementById('membership-pay-modal-close');
+        const payAgreeCheckbox = document.getElementById('membership-pay-agree');
+        const payAgreeTip = document.getElementById('membership-pay-agree-tip');
+        const payConfirmBtn = document.getElementById('membership-pay-confirm');
+        const wechatQrWrap = document.getElementById('membership-wechat-qr-wrap');
+        const wechatQrCanvas = document.getElementById('membership-wechat-qr-canvas');
+
+        function updateMembershipPayState() {
+          const agreed = !!payAgreeCheckbox?.checked;
+          if (payConfirmBtn) payConfirmBtn.disabled = !agreed;
+          if (agreed && payAgreeTip) payAgreeTip.classList.add('hidden');
         }
-        
-        // 每秒钟更新一次倒计时
-        setInterval(updateCountdown, 1000);
+
+        function openMembershipPayModal() {
+          if (!payModalBackdrop) return;
+          if (payAgreeCheckbox) payAgreeCheckbox.checked = false;
+          if (wechatQrWrap) wechatQrWrap.classList.add('hidden');
+          if (wechatQrCanvas) wechatQrCanvas.innerHTML = '';
+          updateMembershipPayState();
+          payModalBackdrop.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeMembershipPayModal() {
+          if (!payModalBackdrop) return;
+          payModalBackdrop.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+
+        if (openPayModalBtn) openPayModalBtn.addEventListener('click', openMembershipPayModal);
+        if (closePayModalBtn) closePayModalBtn.addEventListener('click', closeMembershipPayModal);
+        if (payModalBackdrop) {
+          payModalBackdrop.addEventListener('click', function(e) {
+            if (e.target === payModalBackdrop) closeMembershipPayModal();
+          });
+        }
+        if (payAgreeCheckbox) payAgreeCheckbox.addEventListener('change', updateMembershipPayState);
+        if (payConfirmBtn) {
+          payConfirmBtn.addEventListener('click', async function() {
+            if (!payAgreeCheckbox?.checked) {
+              if (payAgreeTip) payAgreeTip.classList.remove('hidden');
+              return;
+            }
+            const token = localStorage.getItem('token');
+            if (!token) {
+              alert('请先登录后再开通会员。');
+              window.location.href = 'courses.html';
+              return;
+            }
+            const originalText = payConfirmBtn.textContent;
+            payConfirmBtn.disabled = true;
+            payConfirmBtn.textContent = '开通中...';
+            try {
+              const createRes = await fetch('/api/member/memberships/orders', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ planCode: 'annual' }),
+              });
+              const createData = await createRes.json().catch(() => ({}));
+              if (!createRes.ok) {
+                throw new Error(createData.message || '创建会员订单失败');
+              }
+              const paymentStatusRes = await fetch('/api/payment/status', {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const paymentStatus = await paymentStatusRes.json().catch(() => ({}));
+
+              if (paymentStatus.alipay) {
+                const alipayRes = await fetch('/api/payment/alipay/create-membership', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ orderId: createData.orderId }),
+                });
+                const alipayData = await alipayRes.json().catch(() => ({}));
+                if (!alipayRes.ok || !alipayData.payUrl) {
+                  throw new Error(alipayData.message || '会员支付宝下单失败');
+                }
+                window.location.href = alipayData.payUrl;
+                return;
+              }
+
+              if (paymentStatus.wechat) {
+                const wechatRes = await fetch('/api/payment/wechat/create-membership', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ orderId: createData.orderId }),
+                });
+                const wechatData = await wechatRes.json().catch(() => ({}));
+                if (!wechatRes.ok || !wechatData.codeUrl) {
+                  throw new Error(wechatData.message || '会员微信下单失败');
+                }
+                if (wechatQrWrap && wechatQrCanvas) {
+                  wechatQrCanvas.innerHTML = '';
+                  if (typeof window.QRCode !== 'undefined') {
+                    const canvas = document.createElement('canvas');
+                    window.QRCode.toCanvas(canvas, wechatData.codeUrl, { width: 200, margin: 1 }, function(err) {
+                      if (!err && canvas) wechatQrCanvas.appendChild(canvas);
+                    });
+                  } else {
+                    const p = document.createElement('p');
+                    p.className = 'text-xs text-gray-500 break-all';
+                    p.textContent = wechatData.codeUrl;
+                    wechatQrCanvas.appendChild(p);
+                  }
+                  wechatQrWrap.classList.remove('hidden');
+                }
+                alert('微信支付二维码已生成，请扫码完成支付。');
+                return;
+              }
+
+              const confirmRes = await fetch(`/api/member/memberships/orders/${createData.orderId}/confirm-mock`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+              const confirmData = await confirmRes.json().catch(() => ({}));
+              if (!confirmRes.ok) throw new Error(confirmData.message || '会员支付失败');
+              closeMembershipPayModal();
+              alert('会员开通成功！你现在可以学习全部上架课程。');
+              window.location.href = 'member.html';
+            } catch (err) {
+              alert(err.message || '开通失败，请稍后重试');
+            } finally {
+              payConfirmBtn.disabled = false;
+              payConfirmBtn.textContent = originalText;
+              updateMembershipPayState();
+            }
+          });
+        }
         
         // 导航栏滚动效果
         const header = document.getElementById('membership-header-root');

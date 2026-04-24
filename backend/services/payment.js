@@ -4,9 +4,18 @@
 const { pool } = require("../config/db");
 const { wechat: wechatConfig, alipay: alipayConfig } = require("../config/payment");
 
-/** 微信/支付宝商户订单号（6-32位），当前采用 ORD + 6位补零订单ID */
-function buildOutTradeNo(orderId) {
-  return `ORD${String(orderId).padStart(6, "0")}`;
+/** 商户订单号：课程 ORD******，会员 MEM****** */
+function buildOutTradeNo(orderId, bizType = "course") {
+  const prefix = bizType === "membership" ? "MEM" : "ORD";
+  return `${prefix}${String(orderId).padStart(6, "0")}`;
+}
+
+function parseOutTradeNo(outTradeNo) {
+  const value = String(outTradeNo || "").trim();
+  if (!value) return { bizType: null, orderId: 0 };
+  if (value.startsWith("MEM")) return { bizType: "membership", orderId: parseInt(value.slice(3), 10) || 0 };
+  if (value.startsWith("ORD")) return { bizType: "course", orderId: parseInt(value.slice(3), 10) || 0 };
+  return { bizType: "course", orderId: parseInt(value, 10) || 0 };
 }
 
 /** 根据第三方支付回调确认订单并写入 user_courses（供微信/支付宝回调使用） */
@@ -31,12 +40,49 @@ async function confirmOrderPaid(orderId, paymentMethod, paymentId) {
   return { ok: true, courseId: order.course_id };
 }
 
+async function confirmMembershipOrderPaid(orderId, paymentMethod, paymentId) {
+  const [rows] = await pool.execute(
+    "SELECT id, user_id, plan_code, status FROM membership_orders WHERE id = ?",
+    [orderId]
+  );
+  if (!rows.length) return { ok: false, message: "会员订单不存在" };
+  const order = rows[0];
+  if (order.status === "paid") return { ok: true, message: "已支付", userId: order.user_id, planCode: order.plan_code };
+  if (order.status !== "pending") return { ok: false, message: "会员订单状态不允许支付" };
+
+  await pool.execute(
+    "UPDATE membership_orders SET status = 'paid', payment_method = ?, payment_id = ?, paid_at = CURRENT_TIMESTAMP WHERE id = ?",
+    [paymentMethod, paymentId || null, orderId]
+  );
+
+  const planCode = String(order.plan_code || "annual").toLowerCase();
+  const months = planCode === "monthly" ? 1 : planCode === "quarterly" ? 3 : 12;
+  const [activeRows] = await pool.execute(
+    `SELECT expires_at AS expiresAt
+     FROM user_memberships
+     WHERE user_id = ? AND status = 'active'
+     ORDER BY expires_at DESC
+     LIMIT 1`,
+    [order.user_id]
+  );
+  const hasFutureMembership =
+    activeRows.length > 0 && activeRows[0].expiresAt && new Date(activeRows[0].expiresAt).getTime() > Date.now();
+  const baseExpr = hasFutureMembership ? "?" : "NOW()";
+  const baseArgs = hasFutureMembership ? [activeRows[0].expiresAt] : [];
+  await pool.execute(
+    `INSERT INTO user_memberships (user_id, plan_code, started_at, expires_at, status)
+     VALUES (?, ?, ${baseExpr}, DATE_ADD(${baseExpr}, INTERVAL ? MONTH), 'active')`,
+    [order.user_id, planCode, ...baseArgs, ...baseArgs, months]
+  );
+  return { ok: true, userId: order.user_id, planCode };
+}
+
 /**
  * 微信 Native 下单，返回 code_url 供前端生成二维码
  * @param {{ id: number, user_id: number, course_id: number, amount: number }} order
  * @param {string} description - 商品描述
  */
-async function createWechatNativePay(order, description) {
+async function createWechatNativePay(order, description, bizType = "course") {
   if (!wechatConfig.enabled || !wechatConfig.appId || !wechatConfig.mchId || !wechatConfig.privateKey || !wechatConfig.publicKey) {
     throw new Error("微信支付未配置或未启用，请设置 WECHAT_PAY_ENABLED、WECHAT_APP_ID、WECHAT_MCH_ID 及证书");
   }
@@ -49,7 +95,7 @@ async function createWechatNativePay(order, description) {
     key: wechatConfig.apiV3Key || undefined,
   });
   const totalCents = Math.round(Number(order.amount) * 100);
-  const outTradeNo = buildOutTradeNo(order.id);
+  const outTradeNo = buildOutTradeNo(order.id, bizType);
   const params = {
     description: description || `课程订单-${order.id}`,
     out_trade_no: outTradeNo,
@@ -130,12 +176,15 @@ async function handleWechatNotify(rawBody, headers, res) {
     }
     const outTradeNo = event.out_trade_no || "";
     const transactionId = event.transaction_id || "";
-    const orderId = outTradeNo.startsWith("ORD") ? parseInt(outTradeNo.slice(3), 10) : parseInt(outTradeNo, 10);
+    const parsed = parseOutTradeNo(outTradeNo);
+    const orderId = parsed.orderId;
     if (!orderId) {
       res.status(200).json({ code: "FAIL", message: "无效商户订单号" });
       return;
     }
-    const result = await confirmOrderPaid(orderId, "wechat", transactionId);
+    const result = parsed.bizType === "membership"
+      ? await confirmMembershipOrderPaid(orderId, "wechat", transactionId)
+      : await confirmOrderPaid(orderId, "wechat", transactionId);
     if (!result.ok) {
       res.status(200).json({ code: "SUCCESS", message: result.message || "已处理" });
       return;
@@ -152,7 +201,7 @@ async function handleWechatNotify(rawBody, headers, res) {
  * @param {{ id: number, user_id: number, course_id: number, amount: number }} order
  * @param {string} subject - 订单标题
  */
-async function createAlipayPagePay(order, subject) {
+async function createAlipayPagePay(order, subject, bizType = "course") {
   if (!alipayConfig.enabled || !alipayConfig.appId || !alipayConfig.privateKey) {
     throw new Error("支付宝未配置或未启用，请设置 ALIPAY_PAY_ENABLED、ALIPAY_APP_ID、ALIPAY_PRIVATE_KEY");
   }
@@ -164,7 +213,7 @@ async function createAlipayPagePay(order, subject) {
     gateway: alipayConfig.gateway,
     keyType: "PKCS8",
   });
-  const outTradeNo = buildOutTradeNo(order.id);
+  const outTradeNo = buildOutTradeNo(order.id, bizType);
   const totalAmount = Number(order.amount).toFixed(2);
   const bizContent = {
     out_trade_no: outTradeNo,
@@ -224,14 +273,17 @@ async function handleAlipayNotify(postData, res) {
 
     const outTradeNo = (postData.out_trade_no || "").trim();
     const tradeNo = (postData.trade_no || "").trim();
-    const orderId = outTradeNo.startsWith("ORD") ? parseInt(outTradeNo.slice(3), 10) : parseInt(outTradeNo, 10);
+    const parsed = parseOutTradeNo(outTradeNo);
+    const orderId = parsed.orderId;
     if (!orderId || isNaN(orderId)) {
       log("无法解析商户订单号", { out_trade_no: outTradeNo });
       res.send("success");
       return;
     }
 
-    const result = await confirmOrderPaid(orderId, "alipay", tradeNo);
+    const result = parsed.bizType === "membership"
+      ? await confirmMembershipOrderPaid(orderId, "alipay", tradeNo)
+      : await confirmOrderPaid(orderId, "alipay", tradeNo);
     if (result.ok) {
       log("订单已更新为已支付", { orderId, courseId: result.courseId });
     } else {
@@ -246,6 +298,7 @@ async function handleAlipayNotify(postData, res) {
 
 module.exports = {
   confirmOrderPaid,
+  confirmMembershipOrderPaid,
   createWechatNativePay,
   createAlipayPagePay,
   handleWechatNotify,

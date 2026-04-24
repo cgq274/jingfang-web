@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><title></title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 课程中心</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body><style id="courses-styles-root" type="text/tailwindcss">
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>敬方教育 - 课程中心</title><script src="./js/tailwindcss.js"></script><script src="./js/iconify-icon.min.js"></script></head><body><style id="courses-styles-root" type="text/tailwindcss">
       @layer utilities {
         .course-filter-btn {
           @apply px-4 py-2 rounded-full transition-all duration-300;
@@ -99,7 +99,7 @@
             <a href="member.html" id="enter-learning-btn" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg">
               进入学习中心
             </a>
-            <button class="md:hidden">
+            <button class="md:hidden" title="打开导航菜单" aria-label="打开导航菜单">
               <iconify-icon icon="heroicons:bars-3" class="text-2xl text-gray-700"></iconify-icon>
             </button>
           </div>
@@ -697,6 +697,36 @@
         </div>
       </div>
     </section>
+
+    <section class="py-14 bg-white border-y border-gray-100">
+      <div class="container mx-auto px-6">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="rounded-2xl border border-gray-200 p-6">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">购买须知</h3>
+            <div class="space-y-2 text-sm text-gray-700 leading-7">
+              <p>1．本平台课程均为线上投资知识教育内容，仅提供理论教学、框架讲解、工具方法学习，不构成任何投资建议。</p>
+              <p>2．平台及讲师不具备证券投资咨询资质，不荐股、不指导交易、不承诺收益、不保本、不保盈利。</p>
+              <p>3．所有投资决策由用户独立判断、风险自担、盈亏自负。</p>
+              <p>4．本平台所售为数字化虚拟商品，一经开通观看、获取内容，不支持无理由退换。</p>
+              <p>5．账号仅限本人使用，禁止转借、共享、拼课、录屏传播、二次售卖。</p>
+              <p>6．平台保留对违规账号进行封禁、停止服务的权利，且不予退费。</p>
+              <p>7．购买即视为您已阅读、理解并同意本须知及平台相关服务协议。</p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-6 bg-gray-50">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">退费申请流程</h3>
+            <div class="space-y-3 text-sm text-gray-700 leading-7">
+              <p><span class="font-semibold">1. 申请条件：</span>支付后未开通、未观看、未获取课程内容；或因平台系统故障导致无法正常学习且无法修复。</p>
+              <p><span class="font-semibold">2. 申请方式：</span>发送邮件至【你的邮箱】，标题“退费申请-订单号-姓名”，附订单号、支付截图、账号信息、申请原因。</p>
+              <p><span class="font-semibold">3. 审核时效：</span>客服将在1-3个工作日内审核并回复。</p>
+              <p><span class="font-semibold">4. 退款到账：</span>审核通过后按原支付路径退回，一般3-7个工作日到账。</p>
+              <p><span class="font-semibold">5. 不予退费：</span>已开通/已观看/已学习课程；个人原因不学；账号转借、拼课、传播等违规使用。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     
     
     
@@ -1005,21 +1035,39 @@
           <button type="button" id="pay-modal-close" class="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" aria-label="关闭">
             <iconify-icon icon="heroicons:x-mark" class="text-2xl"></iconify-icon>
           </button>
-          <h2 class="text-xl font-bold text-gray-900 mb-2">选择支付方式</h2>
+          <h2 class="text-xl font-bold text-gray-900 mb-2">支付确认</h2>
           <p id="pay-modal-course" class="text-gray-600 mb-4"></p>
           <p id="pay-modal-amount" class="text-2xl font-bold text-blue-600 mb-6"></p>
+          <div class="mb-5 p-4 rounded-xl border-2 border-amber-200 bg-amber-50">
+            <p class="font-semibold text-amber-800 mb-2">重要提示：请务必阅读并同意</p>
+            <div class="space-y-1 text-sm text-gray-700">
+              <p>1．本产品为线上知识付费虚拟商品，一经开通／观看，不支持七日无理由退货。</p>
+              <p>2．课程仅为投资知识教学，不构成投资建议，不荐股、不指导买卖、不承诺收益。</p>
+              <p>3．本人确认：已充分知晓投资风险，自愿购买，投资盈亏与平台无关。</p>
+              <p>4．本人承诺账号仅个人使用，不传播、不倒卖课程内容。</p>
+            </div>
+            <label for="pay-agree-contract" class="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+              <input type="checkbox" id="pay-agree-contract" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600">
+              <span>
+                我已阅读并同意以上内容，
+                <a href="course-service-contract.html" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium">《单课程付费服务合同》</a>
+                及风险声明，自愿购买并承担相应风险。
+              </span>
+            </label>
+            <p id="pay-agree-tip" class="hidden mt-2 text-xs text-red-500">请先勾选同意合同后再继续支付。</p>
+          </div>
           <div class="space-y-3 mb-6">
-            <button type="button" id="pay-method-wechat" class="w-full flex items-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition-colors">
+            <button type="button" id="pay-method-wechat" class="w-full flex items-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               <iconify-icon icon="mdi:wechat" class="text-3xl text-green-600"></iconify-icon>
               <span class="font-medium">微信支付</span>
               <span id="pay-wechat-hint" class="ml-auto text-sm text-gray-500">扫码支付</span>
             </button>
-            <button type="button" id="pay-method-alipay" class="w-full flex items-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-colors">
+            <button type="button" id="pay-method-alipay" class="w-full flex items-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               <iconify-icon icon="simple-icons:alipay" class="text-3xl text-blue-600"></iconify-icon>
               <span class="font-medium">支付宝</span>
               <span id="pay-alipay-hint" class="ml-auto text-sm text-gray-500">跳转支付</span>
             </button>
-            <button type="button" id="pay-method-mock" class="w-full flex items-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-colors">
+            <button type="button" id="pay-method-mock" class="w-full flex items-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               <iconify-icon icon="heroicons:banknotes" class="text-3xl text-amber-600"></iconify-icon>
               <span class="font-medium">模拟支付（测试）</span>
               <span class="ml-auto text-sm text-gray-500">立即完成</span>
@@ -1050,16 +1098,16 @@
             </div>
             <p id="footer-intro" class="text-gray-400 mb-6">专业的金融教育培训平台，致力于培养金融行业精英人才。</p>
             <div class="flex space-x-4">
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="微信" aria-label="微信" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:wechat" class="text-xl"></iconify-icon>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="LinkedIn" aria-label="LinkedIn" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="Twitter" aria-label="Twitter" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:twitter" class="text-xl"></iconify-icon>
               </a>
-              <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
+              <a href="#" title="YouTube" aria-label="YouTube" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
                 <iconify-icon icon="mdi:youtube" class="text-xl"></iconify-icon>
               </a>
             </div>
@@ -1108,6 +1156,7 @@
         
         <div class="border-t border-gray-800 mt-10 pt-8 text-center text-gray-500 text-sm">
           <p id="footer-copyright">© 2024 敬方教育金融培训平台. 保留所有权利.</p>
+          <p class="mt-2">本网站由北京敬方科技有限公司运营，所有内容仅为投资知识科普与教学，不构成投资建议。投资有风险，入市需谨慎。</p>
           <p id="footer-icp" class="mt-2 text-sm hidden"></p>
         </div>
       </div>

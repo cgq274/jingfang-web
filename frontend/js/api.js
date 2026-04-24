@@ -163,3 +163,28 @@ export async function getMemberStats() {
   if (!res.ok) throw new Error(data.message || "获取学习统计失败");
   return data;
 }
+
+// ---------- 会员订单 ----------
+
+/** 创建会员订单（annual/monthly/quarterly） */
+export async function createMembershipOrder(planCode = "annual") {
+  const res = await fetch(`${BASE_URL}/member/memberships/orders`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ planCode }),
+  });
+  const data = await parseRes(res);
+  if (!res.ok) throw new Error(data.message || "创建会员订单失败");
+  return data;
+}
+
+/** 模拟支付确认会员订单（测试用） */
+export async function confirmMembershipMockPay(orderId) {
+  const res = await fetch(`${BASE_URL}/member/memberships/orders/${orderId}/confirm-mock`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+  });
+  const data = await parseRes(res);
+  if (!res.ok) throw new Error(data.message || "会员支付失败");
+  return data;
+}

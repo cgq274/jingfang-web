@@ -326,6 +326,32 @@ function openLoginModal() {
 let currentPayOrderId = null;
 let currentPayCourseId = null;
 
+function updatePayButtonsEnabledState() {
+  const agreeCheckbox = document.getElementById("pay-agree-contract");
+  const agreeTip = document.getElementById("pay-agree-tip");
+  const payButtons = [
+    document.getElementById("pay-method-wechat"),
+    document.getElementById("pay-method-alipay"),
+    document.getElementById("pay-method-mock"),
+  ];
+  const agreed = !!agreeCheckbox?.checked;
+  payButtons.forEach((btn) => {
+    if (btn) btn.disabled = !agreed;
+  });
+  if (agreeTip) agreeTip.classList.add("hidden");
+}
+
+function ensurePayAgreementAccepted() {
+  const agreeCheckbox = document.getElementById("pay-agree-contract");
+  const agreeTip = document.getElementById("pay-agree-tip");
+  if (agreeCheckbox?.checked) {
+    if (agreeTip) agreeTip.classList.add("hidden");
+    return true;
+  }
+  if (agreeTip) agreeTip.classList.remove("hidden");
+  return false;
+}
+
 function openPayModal(course) {
   currentPayCourseId = course.id;
   const backdrop = document.getElementById("pay-modal-backdrop");
@@ -334,12 +360,15 @@ function openPayModal(course) {
   const msgEl = document.getElementById("pay-modal-message");
   const qrWrap = document.getElementById("pay-wechat-qr-wrap");
   const qrCanvas = document.getElementById("pay-wechat-qr-canvas");
+  const agreeCheckbox = document.getElementById("pay-agree-contract");
   if (backdrop && courseEl && amountEl) {
     courseEl.textContent = course.title || "课程";
     amountEl.textContent = "¥" + Number(course.price || 0).toFixed(2);
     if (msgEl) msgEl.classList.add("hidden");
     if (qrWrap) qrWrap.classList.add("hidden");
     if (qrCanvas) qrCanvas.innerHTML = "";
+    if (agreeCheckbox) agreeCheckbox.checked = false;
+    updatePayButtonsEnabledState();
     backdrop.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
@@ -365,12 +394,18 @@ function initPayModal() {
   const msgEl = document.getElementById("pay-modal-message");
   const qrWrap = document.getElementById("pay-wechat-qr-wrap");
   const qrCanvas = document.getElementById("pay-wechat-qr-canvas");
+  const agreeCheckbox = document.getElementById("pay-agree-contract");
 
   if (closeBtn) closeBtn.addEventListener("click", closePayModal);
   if (backdrop) backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closePayModal(); });
+  if (agreeCheckbox) {
+    agreeCheckbox.addEventListener("change", updatePayButtonsEnabledState);
+  }
+  updatePayButtonsEnabledState();
 
   if (wechatBtn) {
     wechatBtn.addEventListener("click", async () => {
+      if (!ensurePayAgreementAccepted()) return;
       if (!currentPayOrderId) {
         if (msgEl) { msgEl.textContent = "请稍候，正在创建订单…"; msgEl.classList.remove("hidden"); }
         return;
@@ -411,6 +446,7 @@ function initPayModal() {
 
   if (alipayBtn) {
     alipayBtn.addEventListener("click", async () => {
+      if (!ensurePayAgreementAccepted()) return;
       if (!currentPayOrderId) {
         if (msgEl) { msgEl.textContent = "请稍候，正在创建订单…"; msgEl.classList.remove("hidden"); }
         return;
@@ -435,6 +471,7 @@ function initPayModal() {
 
   if (mockBtn) {
     mockBtn.addEventListener("click", async () => {
+      if (!ensurePayAgreementAccepted()) return;
       if (!currentPayOrderId) {
         if (msgEl) { msgEl.textContent = "请稍候，正在创建订单…"; msgEl.classList.remove("hidden"); }
         return;
