@@ -3,7 +3,13 @@ const { pool } = require("../config/db");
 const { authMiddleware } = require("../middleware/auth");
 const { logAction } = require("../middleware/audit");
 const multer = require("multer");
-const { cosClient, cosConfig, getPresignedUploadUrl, getPublicUrl } = require("../config/cos");
+const {
+  cosClient,
+  cosConfig,
+  getPresignedUploadUrl,
+  getPublicUrl,
+  getCosConfigError,
+} = require("../config/cos");
 
 const router = express.Router();
 
@@ -55,6 +61,21 @@ const upload = multer({
   },
 });
 
+function handleUploadSingle(req, res, next) {
+  upload.single("file")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({ message: "视频文件超过 1GB 上限，请压缩后重试" });
+      }
+      return res.status(400).json({ message: `上传解析失败：${err.message}` });
+    }
+    if (err) {
+      return res.status(400).json({ message: err.message || "上传解析失败" });
+    }
+    next();
+  });
+}
+
 // 生成 COS 预签名上传 URL（仅管理员）
 router.post("/videos/upload-url", authMiddleware, async (req, res) => {
   if (req.user.role !== "admin") {
@@ -65,6 +86,11 @@ router.post("/videos/upload-url", authMiddleware, async (req, res) => {
 
   if (!filename) {
     return res.status(400).json({ message: "缺少文件名 filename" });
+  }
+
+  const cosErrEarly = getCosConfigError();
+  if (cosErrEarly) {
+    return res.status(503).json({ message: cosErrEarly });
   }
 
   try {
@@ -99,7 +125,7 @@ router.post("/videos/upload-url", authMiddleware, async (req, res) => {
 });
 
 // 上传真实视频文件并创建视频记录（仅管理员）
-router.post("/videos/upload-file", authMiddleware, upload.single("file"), async (req, res) => {
+router.post("/videos/upload-file", authMiddleware, handleUploadSingle, async (req, res) => {
   if (req.user.role !== "admin") {
     return res.status(403).json({ message: "无权限上传视频" });
   }
@@ -113,6 +139,11 @@ router.post("/videos/upload-file", authMiddleware, upload.single("file"), async 
 
   if (!title) {
     return res.status(400).json({ message: "视频标题不能为空" });
+  }
+
+  const cosErr = getCosConfigError();
+  if (cosErr) {
+    return res.status(503).json({ message: cosErr });
   }
 
   try {

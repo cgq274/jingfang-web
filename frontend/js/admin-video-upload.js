@@ -12,6 +12,20 @@ function getAuthHeaders(isJson = true) {
   return headers;
 }
 
+/** 从失败响应中取出可读说明（优先 JSON 的 message） */
+async function readErrorMessage(res) {
+  const text = await res.text();
+  if (!text) return `请求失败（HTTP ${res.status}）`;
+  try {
+    const data = JSON.parse(text);
+    if (data && typeof data.message === "string") return data.message;
+  } catch (_) {
+    /* 非 JSON，如 Nginx 返回的 HTML */
+  }
+  const trimmed = text.replace(/\s+/g, " ").trim();
+  return trimmed.length > 240 ? `${trimmed.slice(0, 240)}…` : trimmed;
+}
+
 const params = new URLSearchParams(window.location.search);
 const editId = params.get("id");
 const isEditMode = !!editId;
@@ -138,7 +152,7 @@ if (form) {
             status: "published",
           }),
         });
-        if (!res.ok) throw new Error((await res.text()) || "更新失败");
+        if (!res.ok) throw new Error(await readErrorMessage(res));
         alert("视频信息已更新");
       } else {
         const file = fileInput?.files?.[0];
@@ -157,7 +171,7 @@ if (form) {
             headers: getAuthHeaders(false),
             body: formData,
           });
-          if (!res.ok) throw new Error((await res.text()) || "上传失败");
+          if (!res.ok) throw new Error(await readErrorMessage(res));
           alert("视频已上传并保存");
         } else {
           const res = await fetch(`${API_BASE}/videos`, {
@@ -172,14 +186,16 @@ if (form) {
               status: "published",
             }),
           });
-          if (!res.ok) throw new Error((await res.text()) || "保存失败");
+          if (!res.ok) throw new Error(await readErrorMessage(res));
           alert("视频信息已保存");
         }
       }
       window.location.href = "admin.html";
     } catch (err) {
       console.error(err);
-      alert(isEditMode ? "更新视频失败" : "上传或保存视频失败");
+      const detail = err && err.message ? String(err.message) : "";
+      const base = isEditMode ? "更新视频失败" : "上传或保存视频失败";
+      alert(detail ? `${base}：${detail}` : base);
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;

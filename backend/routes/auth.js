@@ -9,8 +9,8 @@ const { logAction } = require("../middleware/audit");
 
 const router = express.Router();
 
-// ⚠️ 实际项目应放到环境变量
-const JWT_SECRET = "edu_platform_secret";
+// 必须与 middleware/auth.js 使用同一密钥，否则登录后 token 无法通过校验
+const JWT_SECRET = process.env.JWT_SECRET || "edu_platform_secret";
 
 // 测试路由是否正常工作
 router.get("/test", (req, res) => {
