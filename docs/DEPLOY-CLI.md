@@ -205,6 +205,9 @@ server {
     listen 80 default_server;
     server_name 你的域名.com www.你的域名.com;
 
+    # 管理后台上传视频会超过 Nginx 默认 1m，不设会出现 413 Request Entity Too Large
+    client_max_body_size 1024m;
+
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -316,6 +319,9 @@ server {
 
     ssl_certificate     /etc/nginx/ssl/你的域名.com.pem;
     ssl_certificate_key /etc/nginx/ssl/你的域名.com.key;
+
+    # 与 HTTP 站点一致：允许大体积视频经反代传到 Node（默认 1m 会 413）
+    client_max_body_size 1024m;
 
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -462,6 +468,16 @@ chmod +x /var/www/jingfang-web/deploy.sh
 
 - 检查 PM2：`pm2 status`、`pm2 logs jingfang`
 - 检查端口：`ss -tlnp | grep 3000` 或 `netstat -tlnp | grep 3000`
+
+### 视频上传报 413 Request Entity Too Large
+
+说明请求在 **Nginx** 层就被拒绝（默认只允许约 **1MB** 请求体），Node 里的 1GB 限制尚未生效。在经方站点的 `server { ... }` 里增加一行（与本文「第六步」示例一致）：
+
+```nginx
+    client_max_body_size 1024m;
+```
+
+保存后执行 `sudo nginx -t && sudo systemctl reload nginx`。若单文件可能超过 1GB，可把 `1024m` 改成更大（需与业务、服务器内存相匹配）。
 
 ### 访问 http 返回 404，且错误里出现 /opt/1panel/... 路径
 
