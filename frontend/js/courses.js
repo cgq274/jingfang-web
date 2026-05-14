@@ -479,11 +479,14 @@ function initPayModal() {
       if (msgEl) msgEl.textContent = "支付处理中…";
       msgEl.classList.remove("hidden");
       try {
+        const paidCourseId = currentPayCourseId;
         await confirmMockPay(currentPayOrderId);
         if (msgEl) msgEl.textContent = "";
         closePayModal();
-        ownedCourseIds.add(currentPayCourseId);
-        updateCourseCardButton(currentPayCourseId, false);
+        if (paidCourseId != null) {
+          ownedCourseIds.add(paidCourseId);
+          updateCourseCardButton(paidCourseId, false);
+        }
         alert("支付成功！课程已加入学习中心，可前往「会员中心」观看视频。");
       } catch (e) {
         if (e.needReLogin) {

@@ -194,7 +194,7 @@ router.get("/member/courses", authMiddleware, requireMember, async (req, res) =>
     const baseWhere = hasMembership
       ? `WHERE c.status IN ('published','free')`
       : `WHERE uc.user_id = ?`;
-    const params = hasMembership ? [userId, userId, userId] : [userId, userId, userId, userId];
+    const params = hasMembership ? [userId, userId, userId] : [userId, userId, userId];
     const [rows] = await pool.execute(
       `SELECT 
          c.id,
