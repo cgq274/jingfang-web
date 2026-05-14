@@ -201,6 +201,8 @@ function playVideo(video) {
   }
 
   playerEl.src = video.playUrl;
+  playerEl.preload = "metadata";
+  playerEl.load();
   playerEl.play().catch(() => {});
 
   if (emptyTipEl) {

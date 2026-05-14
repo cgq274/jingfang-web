@@ -73,10 +73,14 @@ const cosClient = new COS({
 
 function getPublicUrl(objectKey) {
   if (!objectKey) return "";
-  // 注意：这里不对 / 做编码，便于浏览器直接访问
-  return `https://${cosConfig.Bucket}.cos.${cosConfig.Region}.myqcloud.com/${encodeURIComponent(
-    objectKey
-  ).replace(/%2F/g, "/")}`;
+  const encodedPath = encodeURIComponent(objectKey).replace(/%2F/g, "/");
+  // 若已为 COS 桶绑定 CDN 加速域名，可设置 COS_PLAY_BASE_URL（如 https://video.example.com），新写入的 play_url 将走 CDN
+  const baseRaw = process.env.COS_PLAY_BASE_URL || process.env.VIDEO_CDN_BASE_URL || "";
+  const base = String(baseRaw).trim().replace(/\/+$/, "");
+  if (base) {
+    return `${base}/${encodedPath}`;
+  }
+  return `https://${cosConfig.Bucket}.cos.${cosConfig.Region}.myqcloud.com/${encodedPath}`;
 }
 
 /**

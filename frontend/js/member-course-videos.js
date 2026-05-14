@@ -202,7 +202,9 @@ function playVideo(video) {
   }
 
   currentPlayingVideo = video;
+  playerEl.preload = "metadata";
   playerEl.src = video.playUrl;
+  playerEl.load();
 
   const progressBar = document.getElementById("video-progress");
   const progressFill = document.getElementById("video-progress-fill");

@@ -499,6 +499,17 @@ chmod +x /var/www/jingfang-web/deploy.sh
 
 保存后等待约 1 分钟再试上传。若仍失败，浏览器 F12「网络」里查看对 `myqcloud.com` 的 PUT 状态码与响应正文。
 
+### 视频播放卡顿、缓冲久
+
+当前为 **单文件 MP4 直链**（`<video src="COS 或 CDN 地址">`），卡顿多半来自 **码率过高、元数据在文件尾部（未 faststart）、或未走 CDN**。可按优先级处理：
+
+1. **开 CDN（推荐）**：在腾讯云为 COS 源站绑定 **CDN 加速域名**，回源 COS；在服务器 `backend/.env` 设置 **`COS_PLAY_BASE_URL=https://你的加速域名`**（无末尾 `/`），重启 Node 后 **新上传** 的视频写入的 `play_url` 会走 CDN。**已入库的旧 `play_url`** 仍是 COS 默认域名，需在数据库批量替换域名，或接受旧课仍走源站。
+2. **压码率 / 转码**：例如 1080p 课程片源控制在 **2～4 Mbps**（H.264 + AAC），手机弱网更稳。
+3. **MP4 快速起播**：用 FFmpeg 等对成片加 **`movflags +faststart`**（把 moov 移到文件头），否则拖动进度条或起播时容易长时间缓冲。
+4. **更高要求**：再考虑 **HLS 多码率自适应**（需转码与切片流水线，改动较大）。
+
+前端已为播放器设置 **`preload="metadata"`** 并在切源时 **`load()`**，略减轻无效预加载，无法替代 CDN 与编码优化。
+
 ### 访问 http 返回 404，且错误里出现 /opt/1panel/... 路径
 
 说明 3000 端口被 **1Panel 的 Node 应用**占用，而不是 PM2 的 jingfang。处理：
