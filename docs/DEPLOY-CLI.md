@@ -477,7 +477,7 @@ chmod +x /var/www/jingfang-web/deploy.sh
     client_max_body_size 1024m;
 ```
 
-保存后执行 `sudo nginx -t && sudo systemctl reload nginx`。若单文件可能超过 1GB，可把 `1024m` 改成更大（需与业务、服务器内存相匹配）。
+保存后执行 `sudo nginx -t && sudo systemctl reload nginx`。若单文件可能超过 1GB，可把 `1024m` 改成更大。**若希望 Nginx 不检查请求体大小**（仍受服务器磁盘与上游超时影响），可写 `client_max_body_size 0;`（Nginx 文档：0 表示关闭对请求体大小的检查）。应用侧若用内存接收整文件，超大上传仍可能占满内存或超时。
 
 ### 访问 http 返回 404，且错误里出现 /opt/1panel/... 路径
 

@@ -26,6 +26,54 @@ async function readErrorMessage(res) {
   return trimmed.length > 240 ? `${trimmed.slice(0, 240)}…` : trimmed;
 }
 
+function parseErrorMessageFromText(text, status) {
+  if (!text) return `请求失败（HTTP ${status}）`;
+  try {
+    const data = JSON.parse(text);
+    if (data && typeof data.message === "string") return data.message;
+  } catch (_) {
+    /* ignore */
+  }
+  const trimmed = text.replace(/\s+/g, " ").trim();
+  return trimmed.length > 240 ? `${trimmed.slice(0, 240)}…` : trimmed;
+}
+
+/**
+ * multipart 上传并监听进度（fetch 无法可靠上报上传字节进度）
+ * @returns {Promise<unknown>} 解析后的 JSON 或抛出带 message 的 Error
+ */
+function uploadFormDataWithProgress(url, formData, token, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.upload.addEventListener("progress", (e) => {
+      if (!onProgress) return;
+      if (e.lengthComputable && e.total > 0) {
+        onProgress(e.loaded, e.total);
+      } else {
+        onProgress(e.loaded, null);
+      }
+    });
+    xhr.addEventListener("load", () => {
+      const text = xhr.responseText || "";
+      const status = xhr.status;
+      if (status >= 200 && status < 300) {
+        try {
+          resolve(text ? JSON.parse(text) : {});
+        } catch {
+          resolve({ raw: text });
+        }
+      } else {
+        reject(new Error(parseErrorMessageFromText(text, status)));
+      }
+    });
+    xhr.addEventListener("error", () => reject(new Error("网络错误，上传中断")));
+    xhr.addEventListener("abort", () => reject(new Error("已取消上传")));
+    xhr.send(formData);
+  });
+}
+
 const params = new URLSearchParams(window.location.search);
 const editId = params.get("id");
 const isEditMode = !!editId;
@@ -110,6 +158,37 @@ init();
 if (form) {
   const fileInput = document.getElementById("video-file-input");
   const fileStatus = document.getElementById("video-file-status");
+  const progressWrap = document.getElementById("video-upload-progress");
+  const progressLabel = document.getElementById("video-upload-progress-label");
+  const progressPct = document.getElementById("video-upload-progress-pct");
+  const progressBar = document.getElementById("video-upload-progress-bar");
+
+  function setUploadProgressVisible(visible) {
+    if (!progressWrap) return;
+    progressWrap.classList.toggle("hidden", !visible);
+    if (!visible && progressBar && progressPct) {
+      progressBar.style.width = "0%";
+      progressBar.classList.remove("opacity-60", "animate-pulse");
+      progressPct.textContent = "";
+    }
+  }
+
+  function updateUploadProgress(loaded, total) {
+    if (progressBar && progressPct && progressLabel) {
+      progressLabel.textContent = "正在上传到服务器…";
+      if (total != null && total > 0) {
+        progressBar.classList.remove("opacity-60", "animate-pulse");
+        const pct = Math.min(100, Math.round((100 * loaded) / total));
+        progressBar.style.width = `${pct}%`;
+        progressPct.textContent = `${pct}%`;
+      } else {
+        progressBar.classList.add("opacity-60", "animate-pulse");
+        progressBar.style.width = "100%";
+        const mb = (loaded / (1024 * 1024)).toFixed(1);
+        progressPct.textContent = `已上传 ${mb} MB`;
+      }
+    }
+  }
 
   if (fileInput && fileStatus) {
     fileInput.addEventListener("change", () => {
@@ -135,7 +214,8 @@ if (form) {
 
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = "提交中...";
+      const willUploadFile = !isEditMode && fileInput?.files?.[0];
+      submitBtn.textContent = willUploadFile ? "上传中…" : "提交中...";
     }
 
     try {
@@ -166,12 +246,21 @@ if (form) {
           if (description != null) formData.append("description", description);
           formData.append("status", "published");
 
-          const res = await fetch(`${API_BASE}/videos/upload-file`, {
-            method: "POST",
-            headers: getAuthHeaders(false),
-            body: formData,
-          });
-          if (!res.ok) throw new Error(await readErrorMessage(res));
+          setUploadProgressVisible(true);
+          if (progressBar) progressBar.classList.remove("opacity-60", "animate-pulse");
+
+          const token = getToken();
+          await uploadFormDataWithProgress(
+            `${API_BASE}/videos/upload-file`,
+            formData,
+            token,
+            updateUploadProgress
+          );
+          if (progressBar && progressPct) {
+            progressBar.classList.remove("opacity-60", "animate-pulse");
+            progressBar.style.width = "100%";
+            progressPct.textContent = "100%";
+          }
           alert("视频已上传并保存");
         } else {
           const res = await fetch(`${API_BASE}/videos`, {
@@ -197,6 +286,7 @@ if (form) {
       const base = isEditMode ? "更新视频失败" : "上传或保存视频失败";
       alert(detail ? `${base}：${detail}` : base);
     } finally {
+      setUploadProgressVisible(false);
       if (submitBtn) {
         submitBtn.disabled = false;
         if (isEditMode) setSubmitButtonLabel("保存修改", "heroicons:pencil-square");

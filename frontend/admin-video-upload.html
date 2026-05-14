@@ -70,9 +70,22 @@
               <div class="upload-zone mb-4">
                 <iconify-icon icon="heroicons:cloud-arrow-up" class="text-4xl text-gray-400 mb-3"></iconify-icon>
                 <p class="text-gray-600 text-sm mb-2">选择视频文件，系统将通过腾讯云 COS 存储</p>
-                <p class="text-xs text-gray-500 mb-3">支持 MP4 等常见格式，建议单文件 1GB 以内</p>
+                <p class="text-xs text-gray-500 mb-3">支持 MP4 等常见格式；上传时下方会显示进度</p>
                 <input id="video-file-input" type="file" accept="video/*" class="block w-full max-w-xs mx-auto text-sm text-gray-600 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 <p id="video-file-status" class="text-xs text-gray-500 mt-2">未选择文件</p>
+              </div>
+              <div id="video-upload-progress" class="hidden mt-4">
+                <div class="flex justify-between text-xs text-gray-600 mb-1.5">
+                  <span id="video-upload-progress-label">正在上传…</span>
+                  <span id="video-upload-progress-pct" class="tabular-nums"></span>
+                </div>
+                <div class="h-2 rounded-full bg-gray-200 overflow-hidden">
+                  <div
+                    id="video-upload-progress-bar"
+                    class="h-full bg-blue-600 rounded-full transition-[width] duration-150 ease-out"
+                    style="width: 0%"
+                  ></div>
+                </div>
               </div>
             </div>
 

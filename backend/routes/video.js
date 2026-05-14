@@ -53,19 +53,35 @@ async function initVideoTable() {
 
 initVideoTable();
 
-// 使用内存存储接收上传文件（适合中小文件；大文件可后续改为流式）
+/** 单文件上限（字节）。未设置或空：默认 1GB；VIDEO_UPLOAD_MAX_BYTES=0：不限制（整文件进内存，超大易 OOM） */
+function getVideoUploadMaxBytes() {
+  const raw = process.env.VIDEO_UPLOAD_MAX_BYTES;
+  if (raw === undefined || raw === null || String(raw).trim() === "") {
+    return 1024 * 1024 * 1024;
+  }
+  const n = parseInt(String(raw).trim(), 10);
+  if (!Number.isFinite(n) || n < 0) return 1024 * 1024 * 1024;
+  if (n === 0) return null;
+  return Math.max(1, n);
+}
+
+const videoUploadMaxBytes = getVideoUploadMaxBytes();
+
+// 使用内存存储接收上传文件（适合中小文件；大文件可后续改为流式直传 COS）
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 1024 * 1024 * 1024, // 1GB
-  },
+  limits: videoUploadMaxBytes != null ? { fileSize: videoUploadMaxBytes } : {},
 });
 
 function handleUploadSingle(req, res, next) {
   upload.single("file")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FILE_SIZE") {
-        return res.status(413).json({ message: "视频文件超过 1GB 上限，请压缩后重试" });
+        const cap =
+          videoUploadMaxBytes != null
+            ? `当前上限约 ${Math.ceil(videoUploadMaxBytes / (1024 * 1024))}MB（环境变量 VIDEO_UPLOAD_MAX_BYTES，设为 0 可取消限制，不推荐）`
+            : "文件超过限制";
+        return res.status(413).json({ message: `视频文件过大。${cap}` });
       }
       return res.status(400).json({ message: `上传解析失败：${err.message}` });
     }
