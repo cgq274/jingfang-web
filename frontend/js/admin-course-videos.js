@@ -1,6 +1,9 @@
-import { getToken, logout } from "./auth.js";
+import { getToken, requireRole } from "./auth.js";
+import { bindCourseVideoPlayerControls } from "./course-video-player.js";
 
 const API_BASE = "/api";
+
+requireRole("admin");
 
 function getAuthHeaders() {
   const token = getToken();
@@ -16,6 +19,7 @@ function getQueryParam(name) {
 }
 
 let currentVideos = [];
+let currentPlayingVideo = null;
 
 async function fetchCourseVideos(courseId) {
   const titleEl = document.getElementById("course-videos-title");
@@ -94,7 +98,6 @@ async function fetchCourseVideos(courseId) {
       smallCountEl.textContent = `共 ${videos.length} 个视频`;
     }
 
-    // 课程封面展示
     if (coverImgEl && coverPlaceholderEl) {
       if (course.coverUrl) {
         coverImgEl.src = course.coverUrl;
@@ -120,6 +123,12 @@ async function fetchCourseVideos(courseId) {
   }
 }
 
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
 function renderVideoList(videos) {
   const listEl = document.getElementById("course-videos-list");
   const playerEl = document.getElementById("course-video-player");
@@ -127,6 +136,7 @@ function renderVideoList(videos) {
   const currentTitleEl = document.getElementById("course-video-current-title");
   const currentMetaEl = document.getElementById("course-video-current-meta");
   const currentDescEl = document.getElementById("course-video-current-desc");
+  const controlsBar = document.getElementById("video-controls-bar");
 
   if (!listEl) return;
 
@@ -138,25 +148,28 @@ function renderVideoList(videos) {
     if (playerEl) {
       playerEl.src = "";
     }
+    if (controlsBar) controlsBar.classList.add("hidden");
     if (emptyTipEl) {
       emptyTipEl.textContent = "该课程暂未关联视频";
     }
     if (currentTitleEl) currentTitleEl.textContent = "暂未选择视频";
     if (currentMetaEl) currentMetaEl.textContent = "";
     if (currentDescEl) currentDescEl.textContent = "";
+    currentPlayingVideo = null;
     return;
   }
 
-  // 有视频时，不自动播放，保持右侧为“未选择”状态，等待管理员点击
   if (playerEl) {
     playerEl.src = "";
   }
+  if (controlsBar) controlsBar.classList.add("hidden");
   if (emptyTipEl) {
     emptyTipEl.textContent = "从左侧选择一个视频进行播放";
   }
   if (currentTitleEl) currentTitleEl.textContent = "暂未选择视频";
   if (currentMetaEl) currentMetaEl.textContent = "";
   if (currentDescEl) currentDescEl.textContent = "";
+  currentPlayingVideo = null;
 
   videos.forEach((v) => {
     const item = document.createElement("div");
@@ -175,7 +188,7 @@ function renderVideoList(videos) {
       </div>
       <div class="flex-1 min-w-0">
         <p class="font-medium text-gray-900 text-sm truncate">
-          ${v.title || "未命名视频"}
+          ${escapeHtml(v.title || "未命名视频")}
         </p>
         <p class="text-[11px] text-gray-500 mt-0.5">
           ${durationText}
@@ -190,6 +203,7 @@ function renderVideoList(videos) {
 function playVideo(video) {
   const playerEl = document.getElementById("course-video-player");
   const emptyTipEl = document.getElementById("course-video-empty-tip");
+  const controlsBar = document.getElementById("video-controls-bar");
   const currentTitleEl = document.getElementById("course-video-current-title");
   const currentMetaEl = document.getElementById("course-video-current-meta");
   const currentDescEl = document.getElementById("course-video-current-desc");
@@ -200,13 +214,42 @@ function playVideo(video) {
     return;
   }
 
-  playerEl.src = video.playUrl;
+  currentPlayingVideo = video;
   playerEl.preload = "metadata";
+  playerEl.src = video.playUrl;
   playerEl.load();
-  playerEl.play().catch(() => {});
+
+  const progressBar = document.getElementById("video-progress");
+  const progressFill = document.getElementById("video-progress-fill");
+  const progress = video.progress || {};
+  const startTime = progress.watchedSeconds > 0 ? Math.max(0, progress.watchedSeconds) : 0;
+
+  function applyStartTime() {
+    if (startTime > 0 && Number.isFinite(playerEl.duration) && playerEl.duration > 0) {
+      playerEl.currentTime = Math.min(startTime, playerEl.duration - 0.5);
+      if (progressBar) {
+        progressBar.value = (playerEl.currentTime / playerEl.duration) * 100;
+        if (progressFill) progressFill.style.width = `${progressBar.value}%`;
+      }
+    }
+    playerEl.play().catch(() => {});
+  }
+
+  if (startTime > 0) {
+    playerEl.addEventListener("loadeddata", applyStartTime, { once: true });
+  } else {
+    if (progressBar) {
+      progressBar.value = 0;
+      if (progressFill) progressFill.style.width = "0%";
+    }
+    playerEl.play().catch(() => {});
+  }
 
   if (emptyTipEl) {
     emptyTipEl.textContent = "";
+  }
+  if (controlsBar) {
+    controlsBar.classList.remove("hidden");
   }
 
   if (currentTitleEl) {
@@ -247,6 +290,12 @@ function bindEvents() {
       }
     });
   }
+
+  bindCourseVideoPlayerControls({
+    enableProgressSave: false,
+    getCourseId: () => null,
+    getPlayingVideo: () => currentPlayingVideo,
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -254,4 +303,3 @@ document.addEventListener("DOMContentLoaded", () => {
   const courseId = getQueryParam("courseId");
   fetchCourseVideos(courseId);
 });
-
