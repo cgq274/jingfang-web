@@ -39,38 +39,27 @@ function parseErrorMessageFromText(text, status) {
 }
 
 /**
- * multipart 上传并监听进度（fetch 无法可靠上报上传字节进度）
- * @returns {Promise<unknown>} 解析后的 JSON 或抛出带 message 的 Error
+ * 浏览器 PUT 直传 COS（预签名 URL）。不传 Content-Type，避免与签名不一致导致 403。
+ * @returns {Promise<void>}
  */
-function uploadFormDataWithProgress(url, formData, token, onProgress) {
+function putFileToPresignedUrl(uploadUrl, file, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", url);
-    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.open("PUT", uploadUrl);
     xhr.upload.addEventListener("progress", (e) => {
       if (!onProgress) return;
-      if (e.lengthComputable && e.total > 0) {
-        onProgress(e.loaded, e.total);
-      } else {
-        onProgress(e.loaded, null);
-      }
+      if (e.lengthComputable && e.total > 0) onProgress(e.loaded, e.total);
+      else onProgress(e.loaded, null);
     });
     xhr.addEventListener("load", () => {
-      const text = xhr.responseText || "";
-      const status = xhr.status;
-      if (status >= 200 && status < 300) {
-        try {
-          resolve(text ? JSON.parse(text) : {});
-        } catch {
-          resolve({ raw: text });
-        }
-      } else {
-        reject(new Error(parseErrorMessageFromText(text, status)));
-      }
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error(parseErrorMessageFromText(xhr.responseText || "", xhr.status)));
     });
-    xhr.addEventListener("error", () => reject(new Error("网络错误，上传中断")));
+    xhr.addEventListener("error", () =>
+      reject(new Error("直传云存储失败（网络中断或 COS 未配置跨域 CORS）"))
+    );
     xhr.addEventListener("abort", () => reject(new Error("已取消上传")));
-    xhr.send(formData);
+    xhr.send(file);
   });
 }
 
@@ -135,6 +124,7 @@ async function init() {
       const opt = document.createElement("option");
       opt.value = c.title || "";
       opt.textContent = c.title || "";
+      if (c.id != null && c.id !== "") opt.dataset.courseId = String(c.id);
       courseSelect.appendChild(opt);
     });
   }
@@ -162,6 +152,7 @@ if (form) {
   const progressLabel = document.getElementById("video-upload-progress-label");
   const progressPct = document.getElementById("video-upload-progress-pct");
   const progressBar = document.getElementById("video-upload-progress-bar");
+  const courseSelect = document.getElementById("video-course");
 
   function setUploadProgressVisible(visible) {
     if (!progressWrap) return;
@@ -173,9 +164,9 @@ if (form) {
     }
   }
 
-  function updateUploadProgress(loaded, total) {
+  function updateUploadProgress(loaded, total, label) {
+    if (progressLabel && label) progressLabel.textContent = label;
     if (progressBar && progressPct && progressLabel) {
-      progressLabel.textContent = "正在上传到服务器…";
       if (total != null && total > 0) {
         progressBar.classList.remove("opacity-60", "animate-pulse");
         const pct = Math.min(100, Math.round((100 * loaded) / total));
@@ -237,30 +228,53 @@ if (form) {
       } else {
         const file = fileInput?.files?.[0];
         if (file) {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("title", title);
-          if (course != null) formData.append("course", course);
-          formData.append("price", String(price));
-          formData.append("durationMinutes", String(durationMinutes));
-          if (description != null) formData.append("description", description);
-          formData.append("status", "published");
-
           setUploadProgressVisible(true);
           if (progressBar) progressBar.classList.remove("opacity-60", "animate-pulse");
 
-          const token = getToken();
-          await uploadFormDataWithProgress(
-            `${API_BASE}/videos/upload-file`,
-            formData,
-            token,
-            updateUploadProgress
-          );
+          const selectedOpt = courseSelect?.selectedOptions?.[0];
+          const cidRaw = selectedOpt?.dataset?.courseId;
+          const courseIdNum = cidRaw ? parseInt(String(cidRaw), 10) : NaN;
+          const courseId = Number.isFinite(courseIdNum) && courseIdNum > 0 ? courseIdNum : undefined;
+
+          updateUploadProgress(0, file.size, "正在申请上传地址…");
+          const presignRes = await fetch(`${API_BASE}/videos/upload-url`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+              filename: file.name,
+              filesize: file.size,
+              courseId,
+            }),
+          });
+          if (!presignRes.ok) throw new Error(await readErrorMessage(presignRes));
+          const presign = await presignRes.json();
+          const { uploadUrl, objectKey } = presign;
+          if (!uploadUrl || !objectKey) throw new Error("服务器未返回上传地址");
+
+          await putFileToPresignedUrl(uploadUrl, file, (loaded, total) => {
+            updateUploadProgress(loaded, total, "正在直传到云存储…");
+          });
           if (progressBar && progressPct) {
             progressBar.classList.remove("opacity-60", "animate-pulse");
             progressBar.style.width = "100%";
             progressPct.textContent = "100%";
           }
+          if (progressLabel) progressLabel.textContent = "正在保存视频信息…";
+
+          const saveRes = await fetch(`${API_BASE}/videos`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+              title,
+              course,
+              price,
+              durationMinutes,
+              description,
+              status: "published",
+              objectKey,
+            }),
+          });
+          if (!saveRes.ok) throw new Error(await readErrorMessage(saveRes));
           alert("视频已上传并保存");
         } else {
           const res = await fetch(`${API_BASE}/videos`, {

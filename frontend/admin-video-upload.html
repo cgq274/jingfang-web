@@ -69,8 +69,8 @@
               <h2 class="form-section-title">视频文件</h2>
               <div class="upload-zone mb-4">
                 <iconify-icon icon="heroicons:cloud-arrow-up" class="text-4xl text-gray-400 mb-3"></iconify-icon>
-                <p class="text-gray-600 text-sm mb-2">选择视频文件，系统将通过腾讯云 COS 存储</p>
-                <p class="text-xs text-gray-500 mb-3">支持 MP4 等常见格式；上传时下方会显示进度</p>
+                <p class="text-gray-600 text-sm mb-2">选择视频文件，将直传腾讯云 COS（不经过本站服务器内存）</p>
+                <p class="text-xs text-gray-500 mb-3">支持 MP4 等常见格式；需在 COS 控制台为存储桶配置跨域（CORS）允许本站域名 PUT，详见部署文档</p>
                 <input id="video-file-input" type="file" accept="video/*" class="block w-full max-w-xs mx-auto text-sm text-gray-600 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 <p id="video-file-status" class="text-xs text-gray-500 mt-2">未选择文件</p>
               </div>

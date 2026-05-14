@@ -104,10 +104,24 @@ router.post("/videos/upload-url", authMiddleware, async (req, res) => {
     return res.status(400).json({ message: "缺少文件名 filename" });
   }
 
+  if (filesize != null && videoUploadMaxBytes != null) {
+    const n = Number(filesize);
+    if (Number.isFinite(n) && n > videoUploadMaxBytes) {
+      return res.status(413).json({
+        message: `文件超过允许大小（约 ${Math.ceil(videoUploadMaxBytes / (1024 * 1024))}MB），可在环境变量 VIDEO_UPLOAD_MAX_BYTES 中调整`,
+      });
+    }
+  }
+
   const cosErrEarly = getCosConfigError();
   if (cosErrEarly) {
     return res.status(503).json({ message: cosErrEarly });
   }
+
+  const signExpiresRaw = parseInt(String(process.env.VIDEO_UPLOAD_SIGN_EXPIRES_SEC || "3600"), 10);
+  const signExpires = Number.isFinite(signExpiresRaw)
+    ? Math.min(43200, Math.max(600, signExpiresRaw))
+    : 3600;
 
   try {
     const safeName = String(filename).replace(/[^\w.\-]+/g, "_");
@@ -124,14 +138,14 @@ router.post("/videos/upload-url", authMiddleware, async (req, res) => {
 
     const { uploadUrl, playUrl } = await getPresignedUploadUrl({
       objectKey,
-      expires: 600, // 10 分钟有效
+      expires: signExpires,
     });
 
     res.json({
       uploadUrl,
       objectKey,
       playUrl,
-      expiresIn: 600,
+      expiresIn: signExpires,
       filesize,
     });
   } catch (err) {
@@ -140,7 +154,7 @@ router.post("/videos/upload-url", authMiddleware, async (req, res) => {
   }
 });
 
-// 上传真实视频文件并创建视频记录（仅管理员）
+// 经服务器内存中转上传（旧方案，仍保留兼容；管理端已改为直传 COS + POST /videos）
 router.post("/videos/upload-file", authMiddleware, handleUploadSingle, async (req, res) => {
   if (req.user.role !== "admin") {
     return res.status(403).json({ message: "无权限上传视频" });
@@ -333,6 +347,26 @@ router.post("/videos", authMiddleware, async (req, res) => {
     return res.status(400).json({ message: "视频标题不能为空" });
   }
 
+  let rowObjectKey = objectKey != null ? String(objectKey).trim() : "";
+  let rowPlayUrl = playUrl != null ? String(playUrl).trim() : "";
+
+  if (rowObjectKey) {
+    const cosErr = getCosConfigError();
+    if (cosErr) {
+      return res.status(503).json({ message: cosErr });
+    }
+    if (rowObjectKey.length > 512 || !rowObjectKey.startsWith("videos/") || rowObjectKey.includes("..")) {
+      return res.status(400).json({ message: "无效的 objectKey" });
+    }
+    if (!/^videos\/[a-zA-Z0-9/_.\-]+$/.test(rowObjectKey)) {
+      return res.status(400).json({ message: "objectKey 格式不正确" });
+    }
+    rowPlayUrl = getPublicUrl(rowObjectKey);
+  } else {
+    rowObjectKey = null;
+    rowPlayUrl = rowPlayUrl || null;
+  }
+
   try {
     const [result] = await pool.execute(
       "INSERT INTO videos (title, course, price, duration_minutes, description, status, object_key, play_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -343,8 +377,8 @@ router.post("/videos", authMiddleware, async (req, res) => {
         durationMinutes != null ? Number(durationMinutes) : 0,
         description || null,
         status || "published",
-        objectKey || null,
-        playUrl || null,
+        rowObjectKey,
+        rowPlayUrl,
       ]
     );
 
@@ -358,7 +392,7 @@ router.post("/videos", authMiddleware, async (req, res) => {
       resourceType: "video",
       resourceId: videoId,
       resourceTitle: title,
-      details: { course, price, durationMinutes, status, objectKey, playUrl },
+      details: { course, price, durationMinutes, status, objectKey: rowObjectKey, playUrl: rowPlayUrl },
       req,
     });
 
@@ -370,6 +404,7 @@ router.post("/videos", authMiddleware, async (req, res) => {
       durationMinutes: durationMinutes != null ? Number(durationMinutes) : 0,
       description: description || null,
       status: status || "published",
+      playUrl: rowPlayUrl || undefined,
     });
   } catch (err) {
     console.error("创建视频失败:", err);

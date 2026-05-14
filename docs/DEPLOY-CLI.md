@@ -479,6 +479,26 @@ chmod +x /var/www/jingfang-web/deploy.sh
 
 保存后执行 `sudo nginx -t && sudo systemctl reload nginx`。若单文件可能超过 1GB，可把 `1024m` 改成更大。**若希望 Nginx 不检查请求体大小**（仍受服务器磁盘与上游超时影响），可写 `client_max_body_size 0;`（Nginx 文档：0 表示关闭对请求体大小的检查）。应用侧若用内存接收整文件，超大上传仍可能占满内存或超时。
 
+**说明**：管理后台视频已改为 **浏览器直传 COS**，大文件 **不再经 Nginx 反代到 Node**，因此日常上传主要受 **COS 跨域（CORS）** 与 **COS 单对象大小** 限制；Nginx 的 `client_max_body_size` 对「直传 COS」几乎无影响，仍对其它走反代的 POST 有意义。
+
+### 视频直传 COS 报跨域 / 直传失败（CORS）
+
+后台上传页会 **PUT** 到 `*.myqcloud.com`，必须在 **腾讯云 COS 控制台 → 存储桶 → 安全管理 → 跨域访问 CORS** 增加规则，例如（把域名改成你的站点；本地调试可加 `http://localhost:3000`）：
+
+```json
+[
+  {
+    "AllowedOrigin": ["https://你的域名.com", "https://www.你的域名.com"],
+    "AllowedMethod": ["GET", "PUT", "HEAD", "POST", "OPTIONS"],
+    "AllowedHeader": ["*"],
+    "ExposeHeader": ["ETag", "x-cos-request-id", "Content-Length"],
+    "MaxAgeSeconds": 600
+  }
+]
+```
+
+保存后等待约 1 分钟再试上传。若仍失败，浏览器 F12「网络」里查看对 `myqcloud.com` 的 PUT 状态码与响应正文。
+
 ### 访问 http 返回 404，且错误里出现 /opt/1panel/... 路径
 
 说明 3000 端口被 **1Panel 的 Node 应用**占用，而不是 PM2 的 jingfang。处理：
